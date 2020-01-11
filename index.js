@@ -3,9 +3,7 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
 
-var mysql      = require('mysql');
-var dbconfig   = require('./config/database.js');
-var connection = mysql.createConnection(dbconfig);
+var connection = require('./custom_lib/db_connection.js');
 
 var app = express();
 
@@ -38,5 +36,5 @@ app.use('/api/member', memberRouter)
 
   
 app.listen(app.get('port'), function () {
-  console.log('Express server listening on port ' + app.get('port'));
+  console.log('Express server listening on port ' + app.get('port') + ' http://localhost:3000/');
 });
