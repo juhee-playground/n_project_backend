@@ -20,16 +20,6 @@ app.get('/', function(req, res){
     res.send('Root');
 });
 
-app.get('/member', function(req, res){
-
-  connection.query('SELECT * from member', function(err, rows) {
-    if(err) throw err;
-
-    console.log('The solution is: ', rows);
-    res.send(rows);
-  });
-});
-
 var memberRouter = require('./routes/member');
 app.use('/api/member', memberRouter)
 
