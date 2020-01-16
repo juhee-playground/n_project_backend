@@ -31,7 +31,7 @@ router.get('/member', function(req, res){
 });
 
 // Retrieve member with id 
-app.get('/member/:id', function (req, res) {
+router.get('/member/:id', function (req, res) {
     let member_id = req.params.id;
     if (!member_id) {
         return res.status(400).send({ error: true, message: 'Please provide member_id' });
@@ -41,14 +41,28 @@ app.get('/member/:id', function (req, res) {
         return res.send({ error: false, data: results[0], message: 'members list.' });
     });
 });
-// Update Member
-router.get('/update', function(req, res){
-    res.send('Update Member World');
-});
+
+//  Update member with id
+router.put('/update', function (req, res) {
+
+    let member_id = req.body.member_id;
+    let member = req.body.member;
+    if (!member_id || !member) {
+      return res.status(400).send({ error: member, message: 'Please provide member and member_id' });
+    }
+
+    dbConn.query("UPDATE member SET member = ? WHERE id = ?", [member, member_id], function (error, results, fields) {
+            if (error) throw error;
+            return res.send({ error: false, data: results, message: 'member has been updated successfully.' });
+        });
+    });
 
 // Delete Member
-router.post('/delete', function(req, res){
-    res.send('Delete Member World');
+router.delete('/delete', function(req, res){
+    connection.query('DELETE FROM member WHERE id=?', [req.body.member_id], function (error, results, fields) {
+        if (error) throw error;
+        res.send('Record has been deleted!');
+    });
 });
 
 module.exports = router
