@@ -20,8 +20,14 @@ router.post('/create', function(req, res){
 });
 
 // Read Member
-router.post('/member', function(req, res){
-    res.send('Hello Member World');
+router.get('/member', function(req, res){
+    connection.query('SELECT * from member', function(err, results, fields) {
+        if(err) {
+            res.send(JSON.stringify({"status": 500, "error": error, "response": null}));
+        }else{
+            res.send(JSON.stringify({"status":200, "error":null, "response": results}));
+        }
+    });
 });
 
 // Update Member
