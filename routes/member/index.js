@@ -4,12 +4,7 @@ const connection = require("../../custom_lib/db_connection")
 const router = express.Router();
 
 router.get('/', function(req, res){
-    connection.query('SELECT * from member', function(err, rows) {
-        if(err) throw err;
-    
-        console.log('The solution is: ', rows);
-        res.send(rows);
-      });
+    res.send('Update Member World');
 });
 
 // Create Member
