@@ -30,6 +30,17 @@ router.get('/member', function(req, res){
     });
 });
 
+// Retrieve member with id 
+app.get('/member/:id', function (req, res) {
+    let member_id = req.params.id;
+    if (!member_id) {
+        return res.status(400).send({ error: true, message: 'Please provide member_id' });
+    }
+    dbConn.query('SELECT * FROM member where id=?', member_id, function (error, results, fields) {
+        if (error) throw error;
+        return res.send({ error: false, data: results[0], message: 'members list.' });
+    });
+});
 // Update Member
 router.get('/update', function(req, res){
     res.send('Update Member World');
