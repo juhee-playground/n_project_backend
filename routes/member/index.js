@@ -10,10 +10,13 @@ router.get('/', function(req, res){
 // Create Member
 router.post('/create', function(req, res){
     var memberData = req.body
-    memberData.created_at = new Date();
-    
+    // memberData.created_at = new Date();
+    console.log(memberData)
     connection.query('INSERT INTO member SET ?', memberData, function(err,results, fields) {
-        if(err) throw err;
+        if(err) {
+            console.error(err, results); 
+            res.send(err, results);
+        }
         console.log(results.insertId);
         res.send(JSON.stringify(results));
     });
