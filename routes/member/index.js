@@ -39,7 +39,7 @@ router.get('/member/:id', function (req, res) {
     if (!member_id) {
         return res.status(400).send({ error: true, message: 'Please provide member_id' });
     }
-    dbConn.query('SELECT * FROM member where id=?', member_id, function (error, results, fields) {
+    connection.query('SELECT * FROM member where id=?', member_id, function (error, results, fields) {
         if (error) throw error;
         return res.send({ error: false, data: results[0], message: 'members list.' });
     });
@@ -50,11 +50,12 @@ router.put('/update', function (req, res) {
 
     let member_id = req.body.member_id;
     let member = req.body.member;
+    console.log(member)
     if (!member_id || !member) {
       return res.status(400).send({ error: member, message: 'Please provide member and member_id' });
     }
 
-    dbConn.query("UPDATE member SET member = ? WHERE id = ?", [member, member_id], function (error, results, fields) {
+    connection.query("UPDATE member SET ? WHERE id = ?", [member, member_id], function (error, results, fields) {
             if (error) throw error;
             return res.send({ error: false, data: results, message: 'member has been updated successfully.' });
         });
