@@ -9,7 +9,7 @@ router.get("/", function(req, res) {
 });
 
 // Read stadium
-router.get("/ ", function(req, res) {
+router.get("/list", function(req, res) {
   connection.query("SELECT * from stadium", function(err, results, fields) {
     if (err) {
       res.send(
