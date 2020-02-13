@@ -4,23 +4,27 @@ var qs = require("querystring");
 
 const router = express.Router();
 
-router.get("/", function(req, res) {
+router.get("/", function (req, res) {
   res.send("Update Member World");
 });
 
 // Create Member
-router.post("/create", function(req, res) {
+router.post("/create", function (req, res) {
   var memberData = req.body;
   // memberData.created_at = new Date();
   console.log(memberData);
-  connection.query("INSERT INTO member SET ?", memberData, function(
+  connection.query("INSERT INTO member SET ?", memberData, function (
     err,
     results,
     fields
   ) {
     if (err) {
       console.error(err, results);
-      res.send(err, results);
+      res.status(500).send({
+        error: true,
+        content: error,
+        message: 'Something broke'
+      })
     }
     console.log(results.insertId);
     res.send(JSON.stringify(results));
@@ -28,16 +32,15 @@ router.post("/create", function(req, res) {
 });
 
 // Read Member
-router.get("/members/", function(req, res) {
-  connection.query("SELECT * from member", function(err, results, fields) {
+router.get("/members/", function (req, res) {
+  connection.query("SELECT * from member", function (err, results, fields) {
     if (err) {
-      res.send(
-        JSON.stringify({
-          status: 500,
-          error: error,
-          response: null
-        })
-      );
+      console.error(error)
+      res.status(500).send({
+        error: true,
+        content: error,
+        message: 'Something broke'
+      })
     } else {
       res.send(results);
     }
@@ -45,7 +48,7 @@ router.get("/members/", function(req, res) {
 });
 
 // Retrieve member with id
-router.get("/members:id", function(req, res) {
+router.get("/members:id", function (req, res) {
   let member_id = req.params.id;
   if (!member_id) {
     return res.status(400).send({
@@ -53,12 +56,19 @@ router.get("/members:id", function(req, res) {
       message: "Please provide member_id"
     });
   }
-  connection.query("SELECT * FROM member where id=?", member_id, function(
+  connection.query("SELECT * FROM member where id=?", member_id, function (
     error,
     results,
     fields
   ) {
-    if (error) throw error;
+    if (error) {
+      console.error(error)
+      res.status(500).send({
+        error: true,
+        content: error,
+        message: 'Something broke'
+      })
+    }
     return res.send({
       error: false,
       data: results[0],
@@ -68,7 +78,7 @@ router.get("/members:id", function(req, res) {
 });
 
 //  Update member with id
-router.put("/update", function(req, res) {
+router.put("/update", function (req, res) {
   let member_id = req.body.member_id;
   let member = req.body.member;
 
@@ -83,8 +93,15 @@ router.put("/update", function(req, res) {
   connection.query(
     "UPDATE member SET ? WHERE id = ?",
     [member, member_id],
-    function(error, results, fields) {
-      if (error) throw error;
+    function (error, results, fields) {
+      if (error) {
+        console.error(error)
+        res.status(500).send({
+          error: true,
+          content: error,
+          message: 'Something broke'
+        })
+      }
       return res.send({
         error: false,
         data: results,
@@ -95,13 +112,20 @@ router.put("/update", function(req, res) {
 });
 
 // Delete Member
-router.delete("/delete", function(req, res) {
+router.delete("/delete", function (req, res) {
   console.log(req.body);
   connection.query(
     "DELETE FROM member WHERE id=?",
     [req.body.member_id],
-    function(error, results, fields) {
-      if (error) throw error;
+    function (error, results, fields) {
+      if (error) {
+        console.error(error)
+        res.status(500).send({
+          error: true,
+          content: error,
+          message: 'Something broke'
+        })
+      }
       res.send("Record has been deleted!");
     }
   );
