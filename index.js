@@ -22,6 +22,12 @@ app.get('/', function(req, res){
 
 var memberRouter = require('./routes/member');
 app.use('/api/member', memberRouter)
+var schdeuleRouter = require('./routes/schedule');
+app.use('/api/schedule', schdeuleRouter)
+var stadiumRouter = require('./routes/stadium');
+app.use('/api/stadium', stadiumRouter)
+
+
 
 
   
