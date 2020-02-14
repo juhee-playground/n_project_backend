@@ -18,11 +18,11 @@ router.post("/create", function (req, res) {
     results,
     fields
   ) {
-    if (error) {
-      console.error(error)
+    if (err) {
+      console.error(err)
       res.status(500).send({
-        error: true,
-        content: error,
+        err: true,
+        content: err,
         message: 'Something broke'
       })
     }
@@ -36,10 +36,10 @@ router.post("/create", function (req, res) {
 router.get("/list", function (req, res) {
   connection.query("SELECT * from schedule", function (err, results, fields) {
     if (err) {
-      console.error(error)
+      console.error(err)
       res.status(500).send({
-        error: true,
-        content: error,
+        err: true,
+        content: err,
         message: 'Something broke'
       })
     } else {
@@ -53,25 +53,25 @@ router.get("/schedules:id", function (req, res) {
   let schedule_id = req.params.id;
   if (!schedule_id) {
     return res.status(400).send({
-      error: true,
+      err: true,
       message: "Please provide schedule_id"
     });
   }
   connection.query("SELECT * FROM schedule where id=?", schedule_id, function (
-    error,
+    err,
     results,
     fields
   ) {
-    if (error) {
-      console.error(error)
+    if (err) {
+      console.error(err)
       res.status(500).send({
-        error: true,
-        content: error,
+        err: true,
+        content: err,
         message: 'Something broke'
       })
     }
     return res.send({
-      error: false,
+      err: false,
       data: results[0],
       message: "schedules details."
     });
@@ -86,7 +86,7 @@ router.put("/update", function (req, res) {
   console.log(req.body);
   if (!schedule_id || !schedule) {
     return res.status(400).send({
-      error: schedule,
+      err: schedule,
       message: "Please provide schedule and schedule_id"
     });
   }
@@ -94,17 +94,17 @@ router.put("/update", function (req, res) {
   connection.query(
     "UPDATE schedule SET ? WHERE id = ?",
     [schedule, schedule_id],
-    function (error, results, fields) {
-      if (error) {
-        console.error(error)
+    function (err, results, fields) {
+      if (err) {
+        console.error(err)
         res.status(500).send({
-          error: true,
-          content: error,
+          err: true,
+          content: err,
           message: 'Something broke'
         })
       }
       return res.send({
-        error: false,
+        err: false,
         data: results,
         message: "schedule has been updated successfully."
       });
@@ -118,12 +118,12 @@ router.delete("/delete", function (req, res) {
   connection.query(
     "DELETE FROM schedule WHERE id=?",
     [req.body.schedule_id],
-    function (error, results, fields) {
-      if (error) {
-        console.error(error)
+    function (err, results, fields) {
+      if (err) {
+        console.error(err)
         res.status(500).send({
-          error: true,
-          content: error,
+          err: true,
+          content: err,
           message: 'Something broke'
         })
       }

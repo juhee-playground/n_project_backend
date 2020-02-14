@@ -21,8 +21,8 @@ router.post("/create", function (req, res) {
     if (err) {
       console.error(err, results);
       res.status(500).send({
-        error: true,
-        content: error,
+        err: true,
+        content: err,
         message: 'Something broke'
       })
     }
@@ -35,10 +35,10 @@ router.post("/create", function (req, res) {
 router.get("/members/", function (req, res) {
   connection.query("SELECT * from member", function (err, results, fields) {
     if (err) {
-      console.error(error)
+      console.error(err)
       res.status(500).send({
-        error: true,
-        content: error,
+        err: true,
+        content: err,
         message: 'Something broke'
       })
     } else {
@@ -52,25 +52,25 @@ router.get("/members:id", function (req, res) {
   let member_id = req.params.id;
   if (!member_id) {
     return res.status(400).send({
-      error: true,
+      err: true,
       message: "Please provide member_id"
     });
   }
   connection.query("SELECT * FROM member where id=?", member_id, function (
-    error,
+    err,
     results,
     fields
   ) {
-    if (error) {
-      console.error(error)
+    if (err) {
+      console.error(err)
       res.status(500).send({
-        error: true,
-        content: error,
+        err: true,
+        content: err,
         message: 'Something broke'
       })
     }
     return res.send({
-      error: false,
+      err: false,
       data: results[0],
       message: "members details."
     });
@@ -85,7 +85,7 @@ router.put("/update", function (req, res) {
   console.log(req.body);
   if (!member_id || !member) {
     return res.status(400).send({
-      error: member,
+      err: member,
       message: "Please provide member and member_id"
     });
   }
@@ -93,17 +93,17 @@ router.put("/update", function (req, res) {
   connection.query(
     "UPDATE member SET ? WHERE id = ?",
     [member, member_id],
-    function (error, results, fields) {
-      if (error) {
-        console.error(error)
+    function (err, results, fields) {
+      if (err) {
+        console.error(err)
         res.status(500).send({
-          error: true,
-          content: error,
+          err: true,
+          content: err,
           message: 'Something broke'
         })
       }
       return res.send({
-        error: false,
+        err: false,
         data: results,
         message: "member has been updated successfully."
       });
@@ -117,12 +117,12 @@ router.delete("/delete", function (req, res) {
   connection.query(
     "DELETE FROM member WHERE id=?",
     [req.body.member_id],
-    function (error, results, fields) {
-      if (error) {
-        console.error(error)
+    function (err, results, fields) {
+      if (err) {
+        console.error(err)
         res.status(500).send({
-          error: true,
-          content: error,
+          err: true,
+          content: err,
           message: 'Something broke'
         })
       }
