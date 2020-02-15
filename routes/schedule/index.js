@@ -13,20 +13,21 @@ router.post("/create", function (req, res) {
   var scheduleData = req.body;
 
   console.log(scheduleData);
-  connection.query("INSERT INTO schedule set ?", scheduleData, function (
+  connection.query("INSERT INTO schedule SET ?", scheduleData, function (
     err,
     results,
     fields
   ) {
-    if (error) {
-      console.error(error)
+
+    if (err) {
+      console.error(err, results);
       res.status(500).send({
         error: true,
-        content: error,
+        content: err,
         message: 'Something broke'
       })
     }
-    console.log(RTCDtlsTransportStateChangedEvent.insertId);
+    console.log(results.insertId);
     res.send(JSON.stringify(results));
   });
 });
@@ -36,10 +37,11 @@ router.post("/create", function (req, res) {
 router.get("/list", function (req, res) {
   connection.query("SELECT * from schedule", function (err, results, fields) {
     if (err) {
-      console.error(error)
+
+      console.error(err)
       res.status(500).send({
         error: true,
-        content: error,
+        content: err,
         message: 'Something broke'
       })
     } else {
