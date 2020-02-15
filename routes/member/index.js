@@ -32,7 +32,7 @@ router.post("/create", function (req, res) {
 });
 
 // Read Member
-router.get("/members/", function (req, res) {
+router.get("/list", function (req, res) {
   connection.query("SELECT * from member", function (err, results, fields) {
     if (err) {
       console.error(err)
@@ -48,7 +48,7 @@ router.get("/members/", function (req, res) {
 });
 
 // Retrieve member with id
-router.get("/members:id", function (req, res) {
+router.get("/:id", function (req, res) {
   let member_id = req.params.id;
   if (!member_id) {
     return res.status(400).send({
