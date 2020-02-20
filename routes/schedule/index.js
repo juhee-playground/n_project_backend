@@ -35,18 +35,11 @@ router.post("/create", function (req, res) {
 
 // Read schedule
 router.get("/list", function (req, res) {
-  connection.query("SELECT sch.id, sch.date, sch.type, sch.start_time, sch.end_time, sch.name, \
-                    st.name as stadium_name, st.address, \
-                    at.member_id,\
-                    mb.name as member_name\
+  connection.query("SELECT sch.id, sch.date, sch.type, sch.start_time as start, sch.end_time as end, sch.name, \
+                    st.name as stadium_name, st.address \
                     from schedule as sch \
                     join stadium as st \
-                    join attend as at\
-                    join member as mb\
-                    where sch.stadium_id = st.id \
-                    and at.schedule_id = sch.id\
-                    and at.member_id = mb.id\
-                    limit 0,10", function (err, results, fields) {
+                    where sch.stadium_id = st.id", function (err, results, fields) {
     if (err) {
       console.error(err)
       res.status(500).send({
