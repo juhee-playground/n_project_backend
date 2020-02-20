@@ -35,8 +35,7 @@ router.get("/count", function (req, res) {
 router.get("/allCount", function (req, res) {
   connection.query("SELECT count(id) as count, date_format(date, '%Y') as year \
     FROM nnnn.schedule \
-    group by year"
-  , function (err, results, fields) {
+    group by year", function (err, results, fields) {
     if (err) {
       console.error(err)
       res.status(500).send({
@@ -49,6 +48,42 @@ router.get("/allCount", function (req, res) {
       res.send(results);
     }
   });
+});
+
+router.get("/getAttendanceList/:id", function (req, res) {
+  let schedule_id = req.params.id;
+  if (!schedule_id) {
+    return res.status(400).send({
+      err: true,
+      message: "Please provide schedule_id"
+    });
+  }
+
+  let query = `SELECT * \
+              from attend as at \
+              join member as mb \
+              where at.id = 1\
+              and at.member_id = mb.id`
+
+  connection.query(query, function (
+    err,
+    results,
+    fields
+  ) {
+    if (err) {
+      console.error(err)
+      res.status(500).send({
+        err: true,
+        content: err,
+        message: 'Something broke'
+      })
+    }
+    return res.send({
+      err: false,
+      data: results,
+      message: "schedules details."
+    });
+  })
 });
 
 module.exports = router;
