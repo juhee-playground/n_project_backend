@@ -62,7 +62,7 @@ router.get("/getAttendanceList/:id", function (req, res) {
   let query = `SELECT * \
               from attend as at \
               join member as mb \
-              where at.id = 1\
+              where at.schedule_id = ${schedule_id}\
               and at.member_id = mb.id`
 
   connection.query(query, function (
