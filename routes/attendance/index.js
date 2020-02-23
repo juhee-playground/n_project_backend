@@ -1,5 +1,5 @@
 const express = require("express");
-const connection = require("../custom_lib/db_connection");
+const connection = require("../../custom_lib/db_connection");
 var qs = require("querystring");
 
 const router = express.Router();
@@ -18,6 +18,34 @@ router.get("/count", function (req, res) {
                     INNER JOIN member ON member.id = attend.member_id \
                     INNER JOIN schedule ON schedule.id = attend.schedule_id \
                     GROUP BY member_id, year", function (err, results, fields) {
+    if (err) {
+      console.error(err)
+      res.status(500).send({
+        err: true,
+        content: err,
+        message: 'Something broke'
+      })
+    } else {
+      res.send(results);
+    }
+  });
+});
+
+// Read atttnedance count 
+router.post("/count/threeMonths", function (req, res) {
+  console.log(req.body);
+  let date = req.body.standard_date;
+  let beforeDate = req.body.before_date;
+
+  let query = `SELECT member.name, member.id, IFNULL(count(attend.id), 0) as count \
+  FROM member LEFT OUTER JOIN attend ON member.id = attend.member_id \
+  LEFT OUTER JOIN schedule ON schedule.id = attend.schedule_id \
+  where date_format(schedule.date, '%Y%m') >= ${beforeDate} and \
+  date_format(schedule.date, '%Y%m') < ${date} \
+  GROUP BY member_id \
+  order by count desc`
+
+  connection.query(query, function (err, results, fields) {
     if (err) {
       console.error(err)
       res.status(500).send({
@@ -85,5 +113,7 @@ router.get("/getAttendanceList/:id", function (req, res) {
     });
   })
 });
+
+
 
 module.exports = router;

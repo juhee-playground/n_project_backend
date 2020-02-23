@@ -26,7 +26,7 @@ var schdeuleRouter = require('./routes/schedule');
 app.use('/api/schedule', schdeuleRouter)
 var stadiumRouter = require('./routes/stadium');
 app.use('/api/stadium', stadiumRouter)
-var attendanceRouter = require('./routes/attendance.js');
+var attendanceRouter = require('./routes/attendance');
 app.use('/api/attendance', attendanceRouter)
 
 
