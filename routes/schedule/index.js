@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.get("/", function (req, res) {
   res.send("Update Schdeule World");
-})
+});
 
 // Create Schedule
 router.post("/create", function (req, res) {
@@ -18,40 +18,40 @@ router.post("/create", function (req, res) {
     results,
     fields
   ) {
-
     if (err) {
-      console.error(err)
+      console.error(err);
       res.status(500).send({
         err: true,
         content: err,
-        message: 'Something broke'
-      })
+        message: "Something broke"
+      });
     }
     console.log(results.insertId);
     res.send(JSON.stringify(results));
   });
 });
 
-
 // Read schedule
 router.get("/list", function (req, res) {
-  connection.query("SELECT sch.id, date_format(sch.date, '%Y-%m-%d') as date, sch.type, sch.start_time as start, sch.end_time as end, sch.name, \
-                    st.name as stadium_name, st.address \
+  connection.query(
+    "SELECT sch.id, date_format(sch.date,'%Y-%m-%d'), sch.type, sch.start_time as start, sch.end_time as end, sch.name, sch.stadium_id,\
+                    st.name as stadium_name, st.address\
                     from schedule as sch \
                     join stadium as st \
-                    where sch.stadium_id = st.id \
-                    order by date", function (err, results, fields) {
-    if (err) {
-      console.error(err)
-      res.status(500).send({
-        err: true,
-        content: err,
-        message: 'Something broke'
-      })
-    } else {
-      res.send(results);
+                    where sch.stadium_id = st.id",
+    function (err, results, fields) {
+      if (err) {
+        console.error(err);
+        res.status(500).send({
+          err: true,
+          content: err,
+          message: "Something broke"
+        });
+      } else {
+        res.send(results);
+      }
     }
-  });
+  );
 });
 
 // Retrieve schedule with id
@@ -69,12 +69,12 @@ router.get("/schedules:id", function (req, res) {
     fields
   ) {
     if (err) {
-      console.error(err)
+      console.error(err);
       res.status(500).send({
         err: true,
         content: err,
-        message: 'Something broke'
-      })
+        message: "Something broke"
+      });
     }
     return res.send({
       err: false,
@@ -102,12 +102,12 @@ router.put("/update", function (req, res) {
     [schedule, schedule_id],
     function (err, results, fields) {
       if (err) {
-        console.error(err)
+        console.error(err);
         res.status(500).send({
           err: true,
           content: err,
-          message: 'Something broke'
-        })
+          message: "Something broke"
+        });
       }
       return res.send({
         err: false,
@@ -126,19 +126,16 @@ router.delete("/delete", function (req, res) {
     [req.body.schedule_id],
     function (err, results, fields) {
       if (err) {
-        console.error(err)
+        console.error(err);
         res.status(500).send({
           err: true,
           content: err,
-          message: 'Something broke'
-        })
+          message: "Something broke"
+        });
       }
-      res.send("Record has been deleted!");
+      res.status(200).send(results);
     }
   );
 });
-
-
-
 
 module.exports = router;
