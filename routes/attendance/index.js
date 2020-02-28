@@ -115,6 +115,54 @@ router.get("/getAttendanceList/:id", function (req, res) {
   })
 });
 
+// Delete Attend
+router.delete("/delete", function (req, res) {
+  console.log('Delete attend', req.body);
+  connection.query(
+    `DELETE FROM attend WHERE member_id= ${req.body.member_id} and schedule_id = ${req.body.schedule_id}`,
+    function (err, results, fields) {
+      if (err) {
+        console.error(err)
+        res.status(500).send({
+          err: true,
+          content: err,
+          message: 'Something broke'
+        })
+      }
+      res.status(200).send({
+        err: false,
+        content: results,
+        message: 'Delete Attend'
+      });
+    }
+  );
+});
 
+
+// Create Attend
+router.post("/create", function (req, res) {
+  var attendData = req.body;
+
+  console.log('Create Attend', attendData);
+  connection.query("INSERT INTO attend SET ?", attendData, function (
+    err,
+    results,
+    fields
+  ) {
+    if (err) {
+      console.error(err, results);
+      res.status(500).send({
+        err: true,
+        content: err,
+        message: 'Something broke'
+      })
+    }
+    res.status(200).send({
+      err: false,
+      content: results,
+      message: 'Add Attend'
+    });
+  });
+});
 
 module.exports = router;
