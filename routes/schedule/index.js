@@ -38,7 +38,8 @@ router.get("/list", function (req, res) {
                     st.name as stadium_name, st.address\
                     from schedule as sch \
                     join stadium as st \
-                    where sch.stadium_id = st.id",
+                    where sch.stadium_id = st.id\
+                    order by date",
     function (err, results, fields) {
       if (err) {
         console.error(err);
