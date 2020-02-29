@@ -34,11 +34,14 @@ router.post("/create", function (req, res) {
 // Read schedule
 router.get("/list", function (req, res) {
   connection.query(
-    "SELECT sch.id, date_format(sch.date,'%Y-%m-%d') as date, sch.type, sch.start_time as start, sch.end_time as end, sch.name, sch.stadium_id,\
-                    st.name as stadium_name, st.address\
-                    from schedule as sch \
-                    join stadium as st \ch.stadium_id = st.id\
-                    order by date",
+    "SELECT schedule.id, date_format(schedule.date,'%Y-%m-%d') as date, \
+        schedule.type, schedule.start_time as start, schedule.end_time as end, \
+        schedule.name, schedule.stadium_id,\
+        stadium.name as stadium_name, stadium.address \
+        FROM schedule \
+        INNER JOIN stadium as stadium \
+        ON schedule.stadium_id = stadium.id \
+        order by date",
     function (err, results, fields) {
       if (err) {
         console.error(err);
