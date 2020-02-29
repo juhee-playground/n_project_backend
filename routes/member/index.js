@@ -70,9 +70,9 @@ router.get("/:id", function (req, res) {
       })
     }
     return res.send({
-      err: false,
       data: results[0],
-      message: "members details."
+      message: "members details.",
+      err: false
     });
   });
 });
