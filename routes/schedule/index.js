@@ -54,8 +54,9 @@ router.get("/list", function (req, res) {
   );
 });
 
+
 // Retrieve schedule with id
-router.get("/schedules:id", function (req, res) {
+router.get("/getInfo/:id", function (req, res) {
   let schedule_id = req.params.id;
   if (!schedule_id) {
     return res.status(400).send({
@@ -63,7 +64,12 @@ router.get("/schedules:id", function (req, res) {
       message: "Please provide schedule_id"
     });
   }
-  connection.query("SELECT * FROM schedule where id=?", schedule_id, function (
+  connection.query("SELECT schedule.id, schedule.name, date_format(schedule.date,'%Y-%m-%d') as date, \
+        date_format(schedule.start_time, '%H:%i') as start_time, \
+        date_format(schedule.end_time, '%H:%i') as end_time, schedule.type, \
+        stadium.id as stadium_id, stadium.name as place, stadium.address FROM schedule \
+        INNER JOIN stadium ON schedule.stadium_id = stadium.id \
+        where schedule.id=?", schedule_id, function (
     err,
     results,
     fields
@@ -76,11 +82,7 @@ router.get("/schedules:id", function (req, res) {
         message: "Something broke"
       });
     }
-    return res.send({
-      err: false,
-      data: results[0],
-      message: "schedules details."
-    });
+    return res.send(results[0]);
   });
 });
 
