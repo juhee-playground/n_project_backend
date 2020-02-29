@@ -37,13 +37,14 @@ router.post("/count/threeMonths", function (req, res) {
   let date = req.body.standard_date;
   let beforeDate = req.body.before_date;
 
-  let query = `SELECT member.name, member.id, IFNULL(count(attend.id), 0) as count \
-  FROM member LEFT OUTER JOIN attend ON member.id = attend.member_id \
-  LEFT OUTER JOIN schedule ON schedule.id = attend.schedule_id \
-  where date_format(schedule.date, '%Y%m') >= ${beforeDate} and \
-  date_format(schedule.date, '%Y%m') < ${date} \
-  GROUP BY member_id \
-  order by count desc`
+  let query = `select member.name, member.id, COUNT(attend.schedule_id) as count \
+                from attend \
+                right join member \
+                  on member.id = attend.member_id \
+                join  \
+                (select * from schedule where date_format(schedule.date, '%Y%m') >= ${beforeDate} and date_format(schedule.date, '%Y%m') < ${date}) as schedule \
+                  on attend.schedule_id = schedule.id	\
+                  GROUP BY member.id order by count desc`
 
   connection.query(query, function (err, results, fields) {
     if (err) {
@@ -114,6 +115,54 @@ router.get("/getAttendanceList/:id", function (req, res) {
   })
 });
 
+// Delete Attend
+router.delete("/delete", function (req, res) {
+  console.log('Delete attend', req.body);
+  connection.query(
+    `DELETE FROM attend WHERE member_id= ${req.body.member_id} and schedule_id = ${req.body.schedule_id}`,
+    function (err, results, fields) {
+      if (err) {
+        console.error(err)
+        res.status(500).send({
+          err: true,
+          content: err,
+          message: 'Something broke'
+        })
+      }
+      res.status(200).send({
+        err: false,
+        content: results,
+        message: 'Delete Attend'
+      });
+    }
+  );
+});
 
+
+// Create Attend
+router.post("/create", function (req, res) {
+  var attendData = req.body;
+
+  console.log('Create Attend', attendData);
+  connection.query("INSERT INTO attend SET ?", attendData, function (
+    err,
+    results,
+    fields
+  ) {
+    if (err) {
+      console.error(err, results);
+      res.status(500).send({
+        err: true,
+        content: err,
+        message: 'Something broke'
+      })
+    }
+    res.status(200).send({
+      err: false,
+      content: results,
+      message: 'Add Attend'
+    });
+  });
+});
 
 module.exports = router;

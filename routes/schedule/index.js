@@ -37,8 +37,8 @@ router.get("/list", function (req, res) {
     "SELECT sch.id, date_format(sch.date,'%Y-%m-%d') as date, sch.type, sch.start_time as start, sch.end_time as end, sch.name, sch.stadium_id,\
                     st.name as stadium_name, st.address\
                     from schedule as sch \
-                    join stadium as st \
-                    where sch.stadium_id = st.id order by date",
+                    join stadium as st \ch.stadium_id = st.id\
+                    order by date",
     function (err, results, fields) {
       if (err) {
         console.error(err);
