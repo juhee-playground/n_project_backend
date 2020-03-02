@@ -5,11 +5,11 @@ var qs = require("querystring");
 const router = express.Router();
 
 router.get("/", function (req, res) {
-  res.send("Update attendance World");
+  res.send("Update attend World");
 });
 
 
-// Read atttnedance count 
+// Read attend count 
 router.get("/count", function (req, res) {
   connection.query("SELECT date_format(schedule.date, '%Y') as year, \
                     member.name, member.id, \
@@ -79,7 +79,7 @@ router.get("/allCount", function (req, res) {
   });
 });
 
-router.get("/getAttendanceList/:id", function (req, res) {
+router.get("/getattendList/:id", function (req, res) {
   let schedule_id = req.params.id;
   if (!schedule_id) {
     return res.status(400).send({
