@@ -13,21 +13,9 @@ router.post("/create", function (req, res) {
   var scheduleData = req.body;
 
   console.log(scheduleData);
-  connection.query("INSERT INTO schedule SET ?", scheduleData, function (
-    err,
-    results,
-    fields
-  ) {
-    if (err) {
-      console.error(err);
-      res.status(500).send({
-        err: true,
-        content: err,
-        message: "Something broke"
-      });
-    }
-    console.log(results.insertId);
-    res.send(JSON.stringify(results));
+  connection.query("INSERT INTO schedule SET ?", scheduleData, function (err, results, fields) {
+    if (err) next(err);
+    res.send(results);
   });
 });
 
@@ -43,16 +31,8 @@ router.get("/list", function (req, res) {
         ON schedule.stadium_id = stadium.id \
         order by date",
     function (err, results, fields) {
-      if (err) {
-        console.error(err);
-        res.status(500).send({
-          err: true,
-          content: err,
-          message: "Something broke"
-        });
-      } else {
-        res.send(results);
-      }
+      if (err) next(err);
+      res.send(results);
     }
   );
 });
@@ -72,20 +52,9 @@ router.get("/getInfo/:id", function (req, res) {
         date_format(schedule.end_time, '%H:%i') as end_time, schedule.type, \
         stadium.id as stadium_id, stadium.name as place, stadium.address FROM schedule \
         INNER JOIN stadium ON schedule.stadium_id = stadium.id \
-        where schedule.id=?", schedule_id, function (
-    err,
-    results,
-    fields
-  ) {
-    if (err) {
-      console.error(err);
-      res.status(500).send({
-        err: true,
-        content: err,
-        message: "Something broke"
-      });
-    }
-    return res.send(results[0]);
+        where schedule.id=?", schedule_id, function (err, results, fields) {
+    if (err) next(err);
+    res.send(results[0]);
   });
 });
 
@@ -106,19 +75,8 @@ router.put("/update", function (req, res) {
     "UPDATE schedule SET ? WHERE id = ?",
     [schedule, schedule_id],
     function (err, results, fields) {
-      if (err) {
-        console.error(err);
-        res.status(500).send({
-          err: true,
-          content: err,
-          message: "Something broke"
-        });
-      }
-      return res.send({
-        err: false,
-        data: results,
-        message: "schedule has been updated successfully."
-      });
+      if (err) next(err);
+      res.send(results);
     }
   );
 });
@@ -130,15 +88,8 @@ router.delete("/delete", function (req, res) {
     "DELETE FROM schedule WHERE id=?",
     [req.body.schedule_id],
     function (err, results, fields) {
-      if (err) {
-        console.error(err);
-        res.status(500).send({
-          err: true,
-          content: err,
-          message: "Something broke"
-        });
-      }
-      res.status(200).send(results);
+      if (err) next(err);
+      res.send(results);
     }
   );
 });

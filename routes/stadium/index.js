@@ -11,17 +11,8 @@ router.get("/", function (req, res) {
 // Read stadium
 router.get("/list", function (req, res) {
   connection.query("SELECT * from stadium", function (err, results, fields) {
-    if (err) {
-      res.send(
-        JSON.stringify({
-          status: 500,
-          err: err,
-          response: null
-        })
-      );
-    } else {
-      res.send(results);
-    }
+    if (err) next(err);
+    res.send(results);
   });
 });
 
@@ -34,24 +25,9 @@ router.get("/stadiums:id", function (req, res) {
       message: "Please provide schedule_id"
     });
   }
-  connection.query("SELECT * FROM stadium where id=?", stadium_id, function (
-    err,
-    results,
-    fields
-  ) {
-    if (err) {
-      console.error(err)
-      res.status(500).send({
-        err: true,
-        content: err,
-        message: 'Something broke'
-      })
-    }
-    return res.send({
-      err: false,
-      data: results[0],
-      message: "stadiums details."
-    });
+  connection.query("SELECT * FROM stadium where id=?", stadium_id, function (err, results, fields) {
+    if (err) next(err);
+    res.send(results[0]);
   });
 })
 

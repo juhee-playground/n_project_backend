@@ -11,24 +11,19 @@ router.get("/", function (req, res) {
 
 // Read attend count 
 router.get("/count", function (req, res) {
-  connection.query("SELECT date_format(schedule.date, '%Y') as year, \
-                    member.name, member.id, \
-                    count(attend.member_id) as count \
-                    FROM attend as attend \
-                    INNER JOIN member ON member.id = attend.member_id \
-                    INNER JOIN schedule ON schedule.id = attend.schedule_id \
-                    GROUP BY member_id, year", function (err, results, fields) {
-    if (err) {
-      console.error(err)
-      res.status(500).send({
-        err: true,
-        content: err,
-        message: 'Something broke'
-      })
-    } else {
+  let query = "SELECT date_format(schedule.date, '%Y') as year, \
+                      member.name, member.id, \
+                      count(attend.member_id) as count \
+                      FROM attend as attend \
+                      INNER JOIN member ON member.id = attend.member_id \
+                      INNER JOIN schedule ON schedule.id = attend.schedule_id \
+                      GROUP BY member_id, year"
+
+  connection.query(query,
+    function (err, results, fields) {
+      if (err) next(err);
       res.send(results);
-    }
-  });
+    });
 });
 
 // Read atttnedance count 
@@ -47,35 +42,19 @@ router.post("/count/threeMonths", function (req, res) {
                   GROUP BY member.id order by count desc`
 
   connection.query(query, function (err, results, fields) {
-    if (err) {
-      console.error(err)
-      res.status(500).send({
-        err: true,
-        content: err,
-        message: 'Something broke'
-      })
-    } else {
-      res.send(results);
-    }
+    if (err) next(err);
+    res.send(results);
   });
 });
 
 // Read atttnedance count 
 router.get("/allCount", function (req, res) {
-  connection.query("SELECT count(id) as count, date_format(date, '%Y') as year \
-    FROM nnnn.schedule \
-    group by year", function (err, results, fields) {
-    if (err) {
-      console.error(err)
-      res.status(500).send({
-        err: true,
-        content: err,
-        message: 'Something broke'
-      })
-    } else {
-      console.log(results);
-      res.send(results);
-    }
+  let query = "SELECT count(id) as count, date_format(date, '%Y') as year \
+                      FROM nnnn.schedule \
+                      group by year"
+  connection.query(query, function (err, results, fields) {
+    if (err) next(err);
+    res.send(results);
   });
 });
 
@@ -94,24 +73,9 @@ router.get("/getattendList/:id", function (req, res) {
               where at.schedule_id = ${schedule_id}\
               and at.member_id = mb.id`
 
-  connection.query(query, function (
-    err,
-    results,
-    fields
-  ) {
-    if (err) {
-      console.error(err)
-      res.status(500).send({
-        err: true,
-        content: err,
-        message: 'Something broke'
-      })
-    }
-    return res.send({
-      err: false,
-      data: results,
-      message: "schedules details."
-    });
+  connection.query(query, function (err, results, fields) {
+    if (err) next(err);
+    res.send(results);
   })
 });
 
@@ -121,19 +85,8 @@ router.delete("/delete", function (req, res) {
   connection.query(
     `DELETE FROM attend WHERE member_id= ${req.body.member_id} and schedule_id = ${req.body.schedule_id}`,
     function (err, results, fields) {
-      if (err) {
-        console.error(err)
-        res.status(500).send({
-          err: true,
-          content: err,
-          message: 'Something broke'
-        })
-      }
-      res.status(200).send({
-        err: false,
-        content: results,
-        message: 'Delete Attend'
-      });
+      if (err) next(err);
+      res.send(results);
     }
   );
 });
@@ -144,24 +97,9 @@ router.post("/create", function (req, res) {
   var attendData = req.body;
 
   console.log('Create Attend', attendData);
-  connection.query("INSERT INTO attend SET ?", attendData, function (
-    err,
-    results,
-    fields
-  ) {
-    if (err) {
-      console.error(err, results);
-      res.status(500).send({
-        err: true,
-        content: err,
-        message: 'Something broke'
-      })
-    }
-    res.status(200).send({
-      err: false,
-      content: results,
-      message: 'Add Attend'
-    });
+  connection.query("INSERT INTO attend SET ?", attendData, function (err, results, fields) {
+    if (err) next(err);
+    res.send(results);
   });
 });
 
