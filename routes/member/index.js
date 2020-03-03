@@ -24,9 +24,9 @@ router.post("/create", function (req, res) {
 // Read Member
 router.get("/list", function (req, res) {
   connection.query("SELECT * from member", function (err, results, fields) {
-      if (err) next(err);
-      res.send(results);
-    }
+    if (err) next(err);
+    res.send(results);
+
   });
 });
 
