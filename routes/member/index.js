@@ -4,12 +4,12 @@ var qs = require("querystring");
 
 const router = express.Router();
 
-router.get("/", function(req, res) {
+router.get("/", function(req, res, next) {
   res.send("Update Member World");
 });
 
 // Create Member
-router.post("/create", function(req, res) {
+router.post("/create", function(req, res, next) {
   var memberData = req.body;
   // memberData.created_at = new Date();
   console.log(memberData);
@@ -26,7 +26,7 @@ router.post("/create", function(req, res) {
 });
 
 // Read Member
-router.get("/list", function(req, res) {
+router.get("/list", function(req, res, next) {
   connection.query("SELECT * from member", function(err, results, fields) {
     if (err) next(err);
     res.send(results);
@@ -34,7 +34,7 @@ router.get("/list", function(req, res) {
 });
 
 // Retrieve member with id
-router.get("/:id", function(req, res) {
+router.get("/:id", function(req, res, next) {
   let member_id = req.params.id;
   if (!member_id) {
     return res.status(400).send({
@@ -53,7 +53,7 @@ router.get("/:id", function(req, res) {
 });
 
 //  Update member with id
-router.put("/update", function(req, res) {
+router.put("/update", function(req, res, next) {
   let member_id = req.body.member_id;
   let member = req.body.member;
 
@@ -76,7 +76,7 @@ router.put("/update", function(req, res) {
 });
 
 // Delete Member
-router.delete("/delete", function(req, res) {
+router.delete("/delete", function(req, res, next) {
   console.log(req.body);
   connection.query(
     "DELETE FROM member WHERE id=?",

@@ -4,13 +4,13 @@ var qs = require("querystring");
 
 const router = express.Router();
 
-router.get("/", function (req, res) {
+router.get("/", function (req, res, next) {
   res.send("Update attend World");
 });
 
 
 // Read attend count 
-router.get("/count", function (req, res) {
+router.get("/count", function (req, res, next) {
   let query = "SELECT date_format(schedule.date, '%Y') as year, \
                       member.name, member.id, \
                       count(attend.member_id) as count \
@@ -27,7 +27,7 @@ router.get("/count", function (req, res) {
 });
 
 // Read atttnedance count 
-router.post("/count/threeMonths", function (req, res) {
+router.post("/count/threeMonths", function (req, res, next) {
   console.log(req.body);
   let date = req.body.standard_date;
   let beforeDate = req.body.before_date;
@@ -48,7 +48,7 @@ router.post("/count/threeMonths", function (req, res) {
 });
 
 // Read atttnedance count 
-router.get("/allCount", function (req, res) {
+router.get("/allCount", function (req, res, next) {
   let query = "SELECT count(id) as count, date_format(date, '%Y') as year \
                       FROM nnnn.schedule \
                       group by year"
@@ -58,7 +58,7 @@ router.get("/allCount", function (req, res) {
   });
 });
 
-router.get("/getattendList/:id", function (req, res) {
+router.get("/getattendList/:id", function (req, res, next) {
   let schedule_id = req.params.id;
   if (!schedule_id) {
     return res.status(400).send({
@@ -80,7 +80,7 @@ router.get("/getattendList/:id", function (req, res) {
 });
 
 // Delete Attend
-router.delete("/delete", function (req, res) {
+router.delete("/delete", function (req, res, next) {
   console.log('Delete attend', req.body);
   connection.query(
     `DELETE FROM attend WHERE member_id= ${req.body.member_id} and schedule_id = ${req.body.schedule_id}`,
@@ -93,7 +93,7 @@ router.delete("/delete", function (req, res) {
 
 
 // Create Attend
-router.post("/create", function (req, res) {
+router.post("/create", function (req, res, next) {
   var attendData = req.body;
 
   console.log('Create Attend', attendData);

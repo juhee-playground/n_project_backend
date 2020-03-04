@@ -4,12 +4,12 @@ var qs = require("querystring");
 
 const router = express.Router();
 
-router.get("/", function (req, res) {
+router.get("/", function (req, res, next) {
   res.send("Update Schdeule World");
 });
 
 // Create Schedule
-router.post("/create", function (req, res) {
+router.post("/create", function (req, res, next) {
   var scheduleData = req.body;
 
   console.log(scheduleData);
@@ -20,7 +20,7 @@ router.post("/create", function (req, res) {
 });
 
 // Read schedule
-router.get("/list", function (req, res) {
+router.get("/list", function (req, res, next) {
   connection.query(
     "SELECT schedule.id, date_format(schedule.date,'%Y-%m-%d') as date, \
         schedule.type, schedule.start_time as start, schedule.end_time as end, \
@@ -39,7 +39,7 @@ router.get("/list", function (req, res) {
 
 
 // Retrieve schedule with id
-router.get("/getInfo/:id", function (req, res) {
+router.get("/getInfo/:id", function (req, res, next) {
   let schedule_id = req.params.id;
   if (!schedule_id) {
     return res.status(400).send({
@@ -59,7 +59,7 @@ router.get("/getInfo/:id", function (req, res) {
 });
 
 //  Update schedule with id
-router.put("/update", function (req, res) {
+router.put("/update", function (req, res, next) {
   let schedule_id = req.body.schedule_id;
   let schedule = req.body.schedule;
 
@@ -82,7 +82,7 @@ router.put("/update", function (req, res) {
 });
 
 // Delete schedule
-router.delete("/delete", function (req, res) {
+router.delete("/delete", function (req, res, next) {
   console.log(req.body);
   connection.query(
     "DELETE FROM schedule WHERE id=?",

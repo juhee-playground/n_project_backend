@@ -18,7 +18,7 @@ app.use(cookieParser());
 // configuration ===============================================================
 app.set('port', process.env.PORT || 3000);
 
-app.get('/', function (req, res) {
+app.get('/', function (req, res, next) {
   res.send('Root');
 });
 

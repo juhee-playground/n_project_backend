@@ -4,12 +4,12 @@ var qs = require("querystring");
 
 const router = express.Router();
 
-router.get("/", function (req, res) {
+router.get("/", function (req, res, next) {
   res.send("Update stadium World");
 });
 
 // Read stadium
-router.get("/list", function (req, res) {
+router.get("/list", function (req, res, next) {
   connection.query("SELECT * from stadium", function (err, results, fields) {
     if (err) next(err);
     res.send(results);
@@ -17,7 +17,7 @@ router.get("/list", function (req, res) {
 });
 
 // Retrieve stadium with id
-router.get("/stadiums:id", function (req, res) {
+router.get("/stadiums:id", function (req, res, next) {
   let schedule_id = req.params.id;
   if (!schedule_id) {
     return res.status(400).send({
