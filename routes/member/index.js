@@ -4,16 +4,20 @@ var qs = require("querystring");
 
 const router = express.Router();
 
-router.get("/", function (req, res) {
+router.get("/", function(req, res) {
   res.send("Update Member World");
 });
 
 // Create Member
-router.post("/create", function (req, res) {
+router.post("/create", function(req, res) {
   var memberData = req.body;
   // memberData.created_at = new Date();
   console.log(memberData);
-  connection.query("INSERT INTO member SET ?", memberData, function (err, results, fields) {
+  connection.query("INSERT INTO member SET ?", memberData, function(
+    err,
+    results,
+    fields
+  ) {
     if (err) next(err);
 
     console.log(results.insertId);
@@ -22,16 +26,15 @@ router.post("/create", function (req, res) {
 });
 
 // Read Member
-router.get("/list", function (req, res) {
-  connection.query("SELECT * from member", function (err, results, fields) {
+router.get("/list", function(req, res) {
+  connection.query("SELECT * from member", function(err, results, fields) {
     if (err) next(err);
     res.send(results);
-
   });
 });
 
 // Retrieve member with id
-router.get("/:id", function (req, res) {
+router.get("/:id", function(req, res) {
   let member_id = req.params.id;
   if (!member_id) {
     return res.status(400).send({
@@ -39,7 +42,7 @@ router.get("/:id", function (req, res) {
       message: "Please provide member_id"
     });
   }
-  connection.query("SELECT * FROM member where id=?", member_id, function (
+  connection.query("SELECT * FROM member where id=?", member_id, function(
     err,
     results,
     fields
@@ -50,7 +53,7 @@ router.get("/:id", function (req, res) {
 });
 
 //  Update member with id
-router.put("/update", function (req, res) {
+router.put("/update", function(req, res) {
   let member_id = req.body.member_id;
   let member = req.body.member;
 
@@ -65,7 +68,7 @@ router.put("/update", function (req, res) {
   connection.query(
     "UPDATE member SET ? WHERE id = ?",
     [member, member_id],
-    function (err, results, fields) {
+    function(err, results, fields) {
       if (err) next(err);
       res.send(results);
     }
@@ -73,12 +76,12 @@ router.put("/update", function (req, res) {
 });
 
 // Delete Member
-router.delete("/delete", function (req, res) {
+router.delete("/delete", function(req, res) {
   console.log(req.body);
   connection.query(
     "DELETE FROM member WHERE id=?",
     [req.body.member_id],
-    function (err, results, fields) {
+    function(err, results, fields) {
       if (err) next(err);
       res.send(results);
     }
