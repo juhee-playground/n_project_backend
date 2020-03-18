@@ -36,9 +36,9 @@ router.post("/count/threeMonths", function (req, res, next) {
                 from attend \
                 right join member \
                   on member.id = attend.member_id \
-                join  \
-                (select * from schedule where date_format(schedule.date, '%Y%m') >= ${beforeDate} and date_format(schedule.date, '%Y%m') < ${date}) as schedule \
-                  on attend.schedule_id = schedule.id	\
+                  left join  \
+                  (select * from schedule where date_format(schedule.date, '%Y%m') >= ${beforeDate} and date_format(schedule.date, '%Y%m') < ${date}) as schedule \
+                    on attend.schedule_id = schedule.id	\
                   GROUP BY member.id order by count desc`
 
   connection.query(query, function (err, results, fields) {
