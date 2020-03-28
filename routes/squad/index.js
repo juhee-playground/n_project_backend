@@ -42,15 +42,15 @@ router.put("/update", function (req, res, next) {
     let squad = req.body.squad;
 
     console.log(req.body);
-    if (!schedule_id || !schedule) {
+    if (!squad_id || !squad) {
         return res.status(400).send({
-            err: schedule,
+            err: squad,
             message: "Please provide squad and squad_id"
         });
     }
 
     connection.query(
-        "UPDATE schedule SET ? WHERE id = ?",
+        "UPDATE squad SET ? WHERE id = ?",
         [squad, squad_id],
         function (err, results, fields) {
             if (err) next(err);
