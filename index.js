@@ -30,8 +30,13 @@ var stadiumRouter = require('./routes/stadium');
 app.use('/api/stadium', stadiumRouter)
 var attendRouter = require('./routes/attend');
 app.use('/api/attend', attendRouter)
+
 var gameRouter = require('./routes/game');
 app.use('/api/game', gameRouter)
+
+var squadRouter = require('./routes/squad');
+app.use('/api/squad', squadRouter)
+
 
 app.use(logHandler);
 app.use(errorHandler);
