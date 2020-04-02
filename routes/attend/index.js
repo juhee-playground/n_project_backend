@@ -34,13 +34,13 @@ router.post("/count/threeMonths", function (req, res, next) {
 
   let query = `select member.name, member.id, COUNT(attend.schedule_id) as count \
                 from attend \
-                right join member \
-                  on member.id = attend.member_id \
-                  left join  \
+                  join  \
                   (select * from schedule where date_format(schedule.date, '%Y%m') >= ${beforeDate} and date_format(schedule.date, '%Y%m') < ${date}) as schedule \
                     on attend.schedule_id = schedule.id	\
+                    right join member \
+                  on member.id = attend.member_id \
                   GROUP BY member.id order by count desc`
-
+  console.log(query)
   connection.query(query, function (err, results, fields) {
     if (err) next(err);
     res.send(results);
