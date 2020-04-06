@@ -72,22 +72,10 @@ router.delete("/delete", function (req, res, next) {
 });
 
 router.post("/bulkCreateOrUpdate", async function (req, res, next) {
-    // let teamSplit_list = req.params.team_split_data
-    // let team_split_index = req.params.team_split_index
-    // let schedule_Id = req.params.selected_schedule_id
-    let teamSplit_list = [
-        {
-            id:2,
-            teamNumber:1
-        },
-        {
-            id:3,
-            teamNumber:1
-        }
-    ]
-    let team_split_index = 1
-    let schedule_Id = 1
-
+    let teamSplit_list = req.params.team_split_data
+    let team_split_index = req.params.team_split_index
+    let schedule_Id = req.params.selected_schedule_id
+    
     try{
         await connection.beginTransaction();
         const queryPromises = []
