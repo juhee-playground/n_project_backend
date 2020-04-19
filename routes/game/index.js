@@ -36,6 +36,17 @@ router.get("/getinfo/:id", function (req, res, next) {
     });
 });
 
+// Read Game
+router.post("/searchWithScheduleIdAndQuarter", function (req, res, next) {
+    let schedule_id = req.body.schedule_id;
+    let quarter = req.body.quarter;
+    let query = `SELECT * from game where schedule_id=${schedule_id} and quarter=${quarter}`
+    connection.query(query, function (err, results, fields) {
+        if (err) next(err);
+        res.send(results);
+    });
+});
+
 //  Update Game with id
 router.put("/update", function (req, res, next) {
     let game_id = req.body.id;
