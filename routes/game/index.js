@@ -49,19 +49,19 @@ router.post("/searchWithScheduleIdAndQuarter", function (req, res, next) {
 
 //  Update Game with id
 router.put("/update", function (req, res, next) {
-    let game_id = req.body.id;
+    console.log("Game Update", req.body);
+    let game_id = req.body.game_id;
     let game = req.body.game;
 
-    console.log(req.body);
-    if (!schedule_id || !schedule) {
+    if (!game_id || !game) {
         return res.status(400).send({
-            err: schedule,
+            err: game,
             message: "Please provide game and game_id"
         });
     }
 
     connection.query(
-        "UPDATE schedule SET ? WHERE id = ?",
+        "UPDATE game SET ? WHERE id = ?",
         [game, game_id],
         function (err, results, fields) {
             if (err) next(err);
