@@ -23,11 +23,11 @@ router.post("/create", function (req, res, next) {
 router.post("/createMultiple", function (req, res, next) {
   var memberSquadData = req.body;
   let sql = 'INSERT INTO memberSquad (`squad_id`, `member_id`,`position`) values ?;'
-//   var values = [
+//   var memberSquadData = [
 //     [ 7, 2, 'LW'],
 //     [ 7, 3, 'FW']
 // ];
-  console.log('Create Squad', memberSquadData);
+  console.log('Create memberSquad', memberSquadData);
   connection.query(sql, [memberSquadData], function (err, results, fields) {
       if (err) next(err);
       res.send(results);
@@ -76,9 +76,18 @@ router.put("/update", function (req, res, next) {
 
 // Delete memberSquad
 router.delete("/delete", function (req, res, next) {
-    console.log('Delete memberSquad', req.body);
+    let searchInfoDict = req.body
+    console.log("Delete memberSquad", searchInfoDict)
+    if (!searchInfoDict) {
+        return res.status(400).send({
+            err: searchInfoDict,
+            message: "Please provide searchInfoDict"
+        });
+    }
+
     connection.query(
-        `DELETE FROM memberSquad WHERE id= ${req.body.memberSquad_id}`,
+        'DELETE FROM memberSquad WHERE ?',
+        searchInfoDict,
         function (err, results, fields) {
             if (err) next(err);
             res.send(results);
