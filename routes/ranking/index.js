@@ -105,9 +105,36 @@ router.get("/assistRanking", function (req, res, next) {
 router.get("/cleanSheetRanking", function (req, res, next) {
   
   // goal 
-  let sqlQuery = ''
+  let sqlQueryHome = 'select member.id as id, member.name as name, game.id as game_id \
+                    from game \
+                    join gameReport \
+                    join squad \
+                    join memberSquad \
+                    join member \
+                    WHERE game.id = gameReport.game_id \
+                    AND game.home_squad_id = sqauad.id \
+                    AND sqauad.id = memberSquad.id \
+                    AND memberSquad.position = "GK" \ 
+                    AND memberSquad.member_id = member.id \
+                    AND (game.home_score = 0 AND game.away_score <> 0)'
+  let sqlQueryAway = 'select member.id as id, member.name as name, game.id as game_id \
+                    from game \
+                    join gameReport \
+                    join squad \
+                    join memberSquad \
+                    join member \
+                    WHERE game.id = gameReport.game_id \
+                    AND game.away_squad_id = sqauad.id \
+                    AND sqauad.id = memberSquad.id \
+                    AND memberSquad.position = "GK" \ 
+                    AND memberSquad.member_id = member.id \
+                    AND (game.away_score = 0 AND game.home_score <> 0)'
 
-  connection.query(sqlQuery, function (err, results, fields) {
+  let totalQuery = `${sqlQueryHome} \
+                    UNION \
+                    ${sqlQueryAway}`
+
+  connection.query(totalQuery, function (err, results, fields) {
       if (err) next(err);
       res.send(results);
   });
