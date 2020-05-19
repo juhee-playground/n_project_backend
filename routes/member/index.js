@@ -48,7 +48,7 @@ router.get("/:id", function(req, res, next) {
     fields
   ) {
     if (err) next(err);
-    res.send(results);
+    res.send(results[0]);
   });
 });
 
