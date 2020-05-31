@@ -100,30 +100,43 @@ router.post("/bulkCreateOrUpdate", async function (req, res, next) {
     let team_split_index = req.body.team_split_index
     let schedule_Id = req.body.selected_schedule_id
     console.log(schedule_Id, team_split_index, teamSplit_list)
+
     try{
-        await connection.beginTransaction();
-        const queryPromises = []
-        for (let i in teamSplit_list){
-            let member_info = teamSplit_list[i];
-            let member_id = member_info.id;
-            let team_number = member_info.teamNumber;
-            queryPromises.push(connection.query(`insert into teamSplit set ? on duplicate key update team_number=${team_number}`, 
-                                    {
-                                        "team_split_index": team_split_index, 
-                                        "schedule_id": schedule_Id, 
-                                        "member_id": member_id, 
-                                        "team_number": team_number
-                                    }))
-        }
-        await Promise.all(queryPromises)
-        await connection.commit();
-        res.send(200, "success");
+        connection.getConnection(async (err, transaction_conn) =>{
+            try{
+                if (err) {
+                    con.release();
+                    throw err;
+                }
+                await transaction_conn.beginTransaction(); // transaction 시작
+            
+                let query_result = null
+                for (let i in teamSplit_list){
+                    let member_info = teamSplit_list[i];
+                    let member_id = member_info.id;
+                    let team_number = member_info.teamNumber;
+                    query_result = await transaction_conn.query(`insert into teamSplit set ? on duplicate key update team_number=${team_number}`, 
+                                            {
+                                                "team_split_index": team_split_index, 
+                                                "schedule_id": schedule_Id, 
+                                                "member_id": member_id, 
+                                                "team_number": team_number
+                                            })
+                }
+                await transaction_conn.commit()
+                // console.log("Show me result?", query_result)
+                res.send(200, "Success");
+            }catch (err){
+                transaction_conn.rollback()
+                throw err
+            }finally{
+                transaction_conn.release() // pool에 connection 반납
+            }
+        })
     } catch (err) {
         console.log(err)
-        connection.rollback()
         next(err)        
-    } 
-
+    }
 });
 
 
