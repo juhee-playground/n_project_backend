@@ -6,7 +6,7 @@ const cors = require('cors');
 var connection = require('./custom_lib/db_connection.js');
 
 var app = express();
-
+// 주석 추가
 app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());

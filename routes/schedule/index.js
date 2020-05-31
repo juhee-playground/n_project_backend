@@ -50,7 +50,7 @@ router.get("/getInfo/:id", function (req, res, next) {
   connection.query("SELECT schedule.id, schedule.name, date_format(schedule.date,'%Y-%m-%d') as date, \
         date_format(schedule.start_time, '%H:%i') as start_time, \
         date_format(schedule.end_time, '%H:%i') as end_time, schedule.type, \
-        stadium.id as stadium_id, stadium.name as place, stadium.address FROM schedule \
+        stadium.id as stadium_id, stadium.name as place, stadium.address, stadium.nick_name FROM schedule \
         INNER JOIN stadium ON schedule.stadium_id = stadium.id \
         where schedule.id=?", schedule_id, function (err, results, fields) {
     if (err) next(err);
@@ -83,10 +83,10 @@ router.put("/update", function (req, res, next) {
 
 // Delete schedule
 router.delete("/delete", function (req, res, next) {
-  console.log(req.body);
+  console.log(req.body.data);
   connection.query(
     "DELETE FROM schedule WHERE id=?",
-    [req.body.schedule_id],
+    [req.body.data.schedule_id],
     function (err, results, fields) {
       if (err) next(err);
       res.send(results);

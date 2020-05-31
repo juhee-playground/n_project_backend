@@ -1,0 +1,141 @@
+Express server listening on port 3000 http://localhost:3000/
+Mysql Connection Failed Error: connect ETIMEDOUT
+    at Connection._handleConnectTimeout (/home/ec2-user/backend/n_project_backend/node_modules/mysql/lib/Connection.js:412:13)
+    at Object.onceWrapper (events.js:421:28)
+    at Socket.emit (events.js:315:20)
+    at Socket._onTimeout (net.js:480:8)
+    at listOnTimeout (internal/timers.js:549:17)
+    at processTimers (internal/timers.js:492:7)
+    --------------------
+    at Protocol._enqueue (/home/ec2-user/backend/n_project_backend/node_modules/mysql/lib/protocol/Protocol.js:144:48)
+    at Protocol.handshake (/home/ec2-user/backend/n_project_backend/node_modules/mysql/lib/protocol/Protocol.js:51:23)
+    at Connection.connect (/home/ec2-user/backend/n_project_backend/node_modules/mysql/lib/Connection.js:119:18)
+    at Object.<anonymous> (/home/ec2-user/backend/n_project_backend/custom_lib/db_connection.js:5:12)
+    at Module._compile (internal/modules/cjs/loader.js:1176:30)
+    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1196:10)
+    at Module.load (internal/modules/cjs/loader.js:1040:32)
+    at Function.Module._load (internal/modules/cjs/loader.js:929:14)
+    at Module.require (internal/modules/cjs/loader.js:1080:19)
+    at require (internal/modules/cjs/helpers.js:72:18) {
+  errorno: 'ETIMEDOUT',
+  code: 'ETIMEDOUT',
+  syscall: 'connect',
+  fatal: true
+}
+Express server listening on port 3000 http://localhost:3000/
+Mysql Connection Failed Error: connect ETIMEDOUT
+    at Connection._handleConnectTimeout (/home/ec2-user/backend/n_project_backend/node_modules/mysql/lib/Connection.js:412:13)
+    at Object.onceWrapper (events.js:421:28)
+    at Socket.emit (events.js:315:20)
+    at Socket._onTimeout (net.js:480:8)
+    at listOnTimeout (internal/timers.js:549:17)
+    at processTimers (internal/timers.js:492:7)
+    --------------------
+    at Protocol._enqueue (/home/ec2-user/backend/n_project_backend/node_modules/mysql/lib/protocol/Protocol.js:144:48)
+    at Protocol.handshake (/home/ec2-user/backend/n_project_backend/node_modules/mysql/lib/protocol/Protocol.js:51:23)
+    at Connection.connect (/home/ec2-user/backend/n_project_backend/node_modules/mysql/lib/Connection.js:119:18)
+    at Object.<anonymous> (/home/ec2-user/backend/n_project_backend/custom_lib/db_connection.js:5:12)
+    at Module._compile (internal/modules/cjs/loader.js:1176:30)
+    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1196:10)
+    at Module.load (internal/modules/cjs/loader.js:1040:32)
+    at Function.Module._load (internal/modules/cjs/loader.js:929:14)
+    at Module.require (internal/modules/cjs/loader.js:1080:19)
+    at require (internal/modules/cjs/helpers.js:72:18) {
+  errorno: 'ETIMEDOUT',
+  code: 'ETIMEDOUT',
+  syscall: 'connect',
+  fatal: true
+}
+[0mGET /api/member [32m200[0m 3.323 ms - 19[0m
+[Wed May 13 2020 12:15:53 GMT+0000 (협정 세계시)]
+Error: Cannot enqueue Query after fatal error.
+    at Protocol._validateEnqueue (/home/ec2-user/backend/n_project_backend/node_modules/mysql/lib/protocol/Protocol.js:212:16)
+    at Protocol._enqueue (/home/ec2-user/backend/n_project_backend/node_modules/mysql/lib/protocol/Protocol.js:138:13)
+    at Connection.query (/home/ec2-user/backend/n_project_backend/node_modules/mysql/lib/Connection.js:201:25)
+    at /home/ec2-user/backend/n_project_backend/routes/member/index.js:45:14
+    at Layer.handle [as handle_request] (/home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/route.js:137:13)
+    at Route.dispatch (/home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/route.js:112:3)
+    at Layer.handle [as handle_request] (/home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/layer.js:95:5)
+    at /home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/index.js:281:22
+    at param (/home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/index.js:354:14)
+[0mGET /api/member/2 [31m500[0m 2.593 ms - 39[0m
+[0mGET /api/member2 [33m404[0m 2.027 ms - 150[0m
+[Wed May 13 2020 12:16:26 GMT+0000 (협정 세계시)]
+Error: Cannot enqueue Query after fatal error.
+    at Protocol._validateEnqueue (/home/ec2-user/backend/n_project_backend/node_modules/mysql/lib/protocol/Protocol.js:212:16)
+    at Protocol._enqueue (/home/ec2-user/backend/n_project_backend/node_modules/mysql/lib/protocol/Protocol.js:138:13)
+    at Connection.query (/home/ec2-user/backend/n_project_backend/node_modules/mysql/lib/Connection.js:201:25)
+    at /home/ec2-user/backend/n_project_backend/routes/member/index.js:45:14
+    at Layer.handle [as handle_request] (/home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/route.js:137:13)
+    at Route.dispatch (/home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/route.js:112:3)
+    at Layer.handle [as handle_request] (/home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/layer.js:95:5)
+    at /home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/index.js:281:22
+    at param (/home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/index.js:354:14)
+[0mGET /api/member/2 [31m500[0m 0.994 ms - 39[0m
+[Wed May 13 2020 12:16:35 GMT+0000 (협정 세계시)]
+Error: Cannot enqueue Query after fatal error.
+    at Protocol._validateEnqueue (/home/ec2-user/backend/n_project_backend/node_modules/mysql/lib/protocol/Protocol.js:212:16)
+    at Protocol._enqueue (/home/ec2-user/backend/n_project_backend/node_modules/mysql/lib/protocol/Protocol.js:138:13)
+    at Connection.query (/home/ec2-user/backend/n_project_backend/node_modules/mysql/lib/Connection.js:201:25)
+    at /home/ec2-user/backend/n_project_backend/routes/member/index.js:45:14
+    at Layer.handle [as handle_request] (/home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/route.js:137:13)
+    at Route.dispatch (/home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/route.js:112:3)
+    at Layer.handle [as handle_request] (/home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/layer.js:95:5)
+    at /home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/index.js:281:22
+    at param (/home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/index.js:354:14)
+[0mGET /api/member/4 [31m500[0m 0.720 ms - 39[0m
+[Wed May 13 2020 12:16:43 GMT+0000 (협정 세계시)]
+Error: Cannot enqueue Query after fatal error.
+    at Protocol._validateEnqueue (/home/ec2-user/backend/n_project_backend/node_modules/mysql/lib/protocol/Protocol.js:212:16)
+    at Protocol._enqueue (/home/ec2-user/backend/n_project_backend/node_modules/mysql/lib/protocol/Protocol.js:138:13)
+    at Connection.query (/home/ec2-user/backend/n_project_backend/node_modules/mysql/lib/Connection.js:201:25)
+    at /home/ec2-user/backend/n_project_backend/routes/member/index.js:30:14
+    at Layer.handle [as handle_request] (/home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/route.js:137:13)
+    at Route.dispatch (/home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/route.js:112:3)
+    at Layer.handle [as handle_request] (/home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/layer.js:95:5)
+    at /home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/index.js:281:22
+    at Function.process_params (/home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/index.js:335:12)
+[0mGET /api/member/list [31m500[0m 0.765 ms - 39[0m
+[Wed May 13 2020 12:16:57 GMT+0000 (협정 세계시)]
+Error: Cannot enqueue Query after fatal error.
+    at Protocol._validateEnqueue (/home/ec2-user/backend/n_project_backend/node_modules/mysql/lib/protocol/Protocol.js:212:16)
+    at Protocol._enqueue (/home/ec2-user/backend/n_project_backend/node_modules/mysql/lib/protocol/Protocol.js:138:13)
+    at Connection.query (/home/ec2-user/backend/n_project_backend/node_modules/mysql/lib/Connection.js:201:25)
+    at /home/ec2-user/backend/n_project_backend/routes/member/index.js:30:14
+    at Layer.handle [as handle_request] (/home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/route.js:137:13)
+    at Route.dispatch (/home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/route.js:112:3)
+    at Layer.handle [as handle_request] (/home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/layer.js:95:5)
+    at /home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/index.js:281:22
+    at Function.process_params (/home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/index.js:335:12)
+[0mGET /api/member/list [31m500[0m 0.627 ms - 39[0m
+[Wed May 13 2020 12:16:57 GMT+0000 (협정 세계시)]
+Error: Cannot enqueue Query after fatal error.
+    at Protocol._validateEnqueue (/home/ec2-user/backend/n_project_backend/node_modules/mysql/lib/protocol/Protocol.js:212:16)
+    at Protocol._enqueue (/home/ec2-user/backend/n_project_backend/node_modules/mysql/lib/protocol/Protocol.js:138:13)
+    at Connection.query (/home/ec2-user/backend/n_project_backend/node_modules/mysql/lib/Connection.js:201:25)
+    at /home/ec2-user/backend/n_project_backend/routes/member/index.js:30:14
+    at Layer.handle [as handle_request] (/home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/route.js:137:13)
+    at Route.dispatch (/home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/route.js:112:3)
+    at Layer.handle [as handle_request] (/home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/layer.js:95:5)
+    at /home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/index.js:281:22
+    at Function.process_params (/home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/index.js:335:12)
+[0mGET /api/member/list [31m500[0m 0.656 ms - 39[0m
+[Wed May 13 2020 12:16:58 GMT+0000 (협정 세계시)]
+Error: Cannot enqueue Query after fatal error.
+    at Protocol._validateEnqueue (/home/ec2-user/backend/n_project_backend/node_modules/mysql/lib/protocol/Protocol.js:212:16)
+    at Protocol._enqueue (/home/ec2-user/backend/n_project_backend/node_modules/mysql/lib/protocol/Protocol.js:138:13)
+    at Connection.query (/home/ec2-user/backend/n_project_backend/node_modules/mysql/lib/Connection.js:201:25)
+    at /home/ec2-user/backend/n_project_backend/routes/member/index.js:30:14
+    at Layer.handle [as handle_request] (/home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/layer.js:95:5)
+    at next (/home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/route.js:137:13)
+    at Route.dispatch (/home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/route.js:112:3)
+    at Layer.handle [as handle_request] (/home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/layer.js:95:5)
+    at /home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/index.js:281:22
+    at Function.process_params (/home/ec2-user/backend/n_project_backend/node_modules/express/lib/router/index.js:335:12)
+[0mGET /api/member/list [31m500[0m 0.659 ms - 39[0m

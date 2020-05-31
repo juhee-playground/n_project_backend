@@ -12,7 +12,6 @@ router.get("/", function(req, res, next) {
 router.post("/create", function(req, res, next) {
   var memberData = req.body;
   // memberData.created_at = new Date();
-  console.log(memberData);
   connection.query("INSERT INTO member SET ?", memberData, function(
     err,
     results,
@@ -25,8 +24,28 @@ router.post("/create", function(req, res, next) {
   });
 });
 
+function getClientIp(req) {
+  var ipAddress;
+  // The request may be forwarded from local web server.
+  var forwardedIpsStr = req.header('x-forwarded-for'); 
+  if (forwardedIpsStr) {
+    // 'x-forwarded-for' header may return multiple IP addresses in
+    // the format: "client IP, proxy 1 IP, proxy 2 IP" so take the
+    // the first one
+    var forwardedIps = forwardedIpsStr.split(',');
+    ipAddress = forwardedIps[0];
+  }
+  if (!ipAddress) {
+    // If request was not forwarded
+    ipAddress = req.connection.remoteAddress;
+  }
+  return ipAddress;
+};
+
 // Read Member
 router.get("/list", function(req, res, next) {
+  let ipAddress = getClientIp(req)
+  console.log("asdfadsf", ipAddress)
   connection.query("SELECT * from member", function(err, results, fields) {
     if (err) next(err);
     res.send(results);
@@ -48,7 +67,7 @@ router.get("/:id", function(req, res, next) {
     fields
   ) {
     if (err) next(err);
-    res.send(results);
+    res.send(results[0]);
   });
 });
 
@@ -57,7 +76,6 @@ router.put("/update", function(req, res, next) {
   let member_id = req.body.member_id;
   let member = req.body.member;
 
-  console.log(req.body);
   if (!member_id || !member) {
     return res.status(400).send({
       err: member,
@@ -77,12 +95,12 @@ router.put("/update", function(req, res, next) {
 
 // Delete Member
 router.delete("/delete", function(req, res, next) {
-  console.log(req.body);
   connection.query(
     "DELETE FROM member WHERE id=?",
-    [req.body.member_id],
+    [req.body.data.member_id],
     function(err, results, fields) {
       if (err) next(err);
+      console.log(results);
       res.send(results);
     }
   );

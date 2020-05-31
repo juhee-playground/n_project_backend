@@ -8,24 +8,6 @@ router.get("/", function (req, res, next) {
   res.send("Update attend World");
 });
 
-
-// Read attend count 
-router.get("/count", function (req, res, next) {
-  let query = "SELECT date_format(schedule.date, '%Y') as year, \
-                      member.name, member.id, \
-                      count(attend.member_id) as count \
-                      FROM attend as attend \
-                      INNER JOIN member ON member.id = attend.member_id \
-                      INNER JOIN schedule ON schedule.id = attend.schedule_id \
-                      GROUP BY member_id, year"
-
-  connection.query(query,
-    function (err, results, fields) {
-      if (err) next(err);
-      res.send(results);
-    });
-});
-
 // Read atttnedance count 
 router.post("/count/threeMonths", function (req, res, next) {
   console.log(req.body);
@@ -40,7 +22,6 @@ router.post("/count/threeMonths", function (req, res, next) {
                     right join member \
                   on member.id = attend.member_id \
                   GROUP BY member.id order by count desc`
-  console.log(query)
   connection.query(query, function (err, results, fields) {
     if (err) next(err);
     res.send(results);
