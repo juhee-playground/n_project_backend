@@ -40,6 +40,8 @@ var teamSplitRouter = require('./routes/teamSplit');
 app.use('/api/teamSplit', teamSplitRouter)
 var memberSquadRouter = require('./routes/memberSquad');
 app.use('/api/memberSquad', memberSquadRouter)
+var gameReportRouter = require('./routes/gameReport');
+app.use('/api/gameReport', gameReportRouter)
 
 app.use(logHandler);
 app.use(errorHandler);
