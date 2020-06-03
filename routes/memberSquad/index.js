@@ -51,6 +51,14 @@ router.get("/getinfo/:id", function (req, res, next) {
     });
 });
 
+router.get("/getinfoWithSquadId/:id", function (req, res, next) {
+    let squad_id = req.params.id;
+    connection.query("SELECT * from memberSquad where squad_id = ?", squad_id, function (err, results, fields) {
+        if (err) next(err);
+        res.send(results);
+    });
+});
+
 //  Update memberSquad with id
 router.put("/update", function (req, res, next) {
     let memberSquad_id = req.body.id;
