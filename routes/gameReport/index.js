@@ -27,7 +27,7 @@ router.get("/list", function (req, res, next) {
     });
 });
 
-//Read selected GameReport
+// Read selected GameReport
 router.get("/getinfo/:id", function (req, res, next) {
     let gameReport_id = req.params.id;
     connection.query("SELECT * from gameReport where id = ?", gameReport_id, function (err, results, fields) {
@@ -36,6 +36,14 @@ router.get("/getinfo/:id", function (req, res, next) {
     });
 });
 
+// Read selected GameReport with game_id
+router.get("/getinfoWithGameId/:id", function (req, res, next) {
+    let game_id = req.params.id;
+    connection.query("SELECT * from gameReport where game_id = ?", game_id, function (err, results, fields) {
+        if (err) next(err);
+        res.send(results);
+    });
+});
 
 //  Update GameReport with id
 router.put("/update", function (req, res, next) {

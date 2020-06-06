@@ -27,6 +27,12 @@ router.get("/stadiums:id", function (req, res, next) {
   }
   connection.query("SELECT * FROM stadium where id=?", stadium_id, function (err, results, fields) {
     if (err) next(err);
+    if (results.length == 0) {
+      res.status(400).send({
+        err:true, 
+        message:"No Result Found"
+      }) 
+    }
     res.send(results[0]);
   });
 })
