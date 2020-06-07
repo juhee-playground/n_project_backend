@@ -53,7 +53,7 @@ router.get("/getinfo/:id", function (req, res, next) {
 
 router.get("/getinfoWithSquadId/:id", function (req, res, next) {
     let squad_id = req.params.id;
-    connection.query("SELECT * from memberSquad join member where memberSquad.squad_id = ? and member.id = memberSquad.member_id", squad_id, function (err, results, fields) {
+    connection.query("SELECT memberSquad.position, memberSquad.member_id, memberSquad.squad_id, member.id, member.name from memberSquad join member where memberSquad.squad_id = ? and member.id = memberSquad.member_id", squad_id, function (err, results, fields) {
         if (err) next(err);
         res.send(results);
     });
