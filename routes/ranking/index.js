@@ -69,10 +69,10 @@ router.get("/goalRanking", function (req, res, next) {
   
   // 전체기간 랭킹
   let sqlQuery = 'select member.name as name, count(*) as score \
-  from (select * from gameReport where gameReport.event = "goal") as gameReportGoal \
+  from (select * from gameReport where gameReport.event_type = "Goal") as gameReportGoal \
   join member \
-  where gameReportGoal.member_A = member.id \
-  group by gameReportGoal.member_A'
+  where gameReportGoal.first_player = member.id \
+  group by gameReportGoal.first_player'
 
   connection.query(sqlQuery, function (err, results, fields) {
       if (err) next(err);
@@ -90,10 +90,10 @@ router.get("/assistRanking", function (req, res, next) {
 
   // 전체기간 랭킹
   let sqlQuery = 'select member.name as name, count(*) as score \
-  from (select * from gameReport where gameReport.event = "goal") as gameReportGoal \
+  from (select * from gameReport where gameReport.event_type = "Goal") as gameReportGoal \
   join member \
-  where gameReportGoal.member_B = member.id \
-  group by gameReportGoal.member_B'
+  where gameReportGoal.last_player = member.id \
+  group by gameReportGoal.last_player'
 
   connection.query(sqlQuery, function (err, results, fields) {
       if (err) next(err);
@@ -112,9 +112,9 @@ router.get("/cleanSheetRanking", function (req, res, next) {
                     join memberSquad \
                     join member \
                     WHERE game.id = gameReport.game_id \
-                    AND game.home_squad_id = sqauad.id \
-                    AND sqauad.id = memberSquad.id \
-                    AND memberSquad.position = "GK" \ 
+                    AND game.home_squad_id = squad.id \
+                    AND squad.id = memberSquad.id \
+                    AND memberSquad.position = "GK" \
                     AND memberSquad.member_id = member.id \
                     AND (game.home_score = 0 AND game.away_score <> 0)'
   let sqlQueryAway = 'select member.id as id, member.name as name, game.id as game_id \
@@ -124,9 +124,9 @@ router.get("/cleanSheetRanking", function (req, res, next) {
                     join memberSquad \
                     join member \
                     WHERE game.id = gameReport.game_id \
-                    AND game.away_squad_id = sqauad.id \
-                    AND sqauad.id = memberSquad.id \
-                    AND memberSquad.position = "GK" \ 
+                    AND game.away_squad_id = squad.id \
+                    AND squad.id = memberSquad.id \
+                    AND memberSquad.position = "GK" \
                     AND memberSquad.member_id = member.id \
                     AND (game.away_score = 0 AND game.home_score <> 0)'
 
