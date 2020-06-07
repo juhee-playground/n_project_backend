@@ -54,6 +54,12 @@ router.get("/getInfo/:id", function (req, res, next) {
         INNER JOIN stadium ON schedule.stadium_id = stadium.id \
         where schedule.id=?", schedule_id, function (err, results, fields) {
     if (err) next(err);
+    if (results.length == 0) {
+      res.status(400).send({
+        err:true, 
+        message:"No Result Found"
+      }) 
+    }
     res.send(results[0]);
   });
 });
