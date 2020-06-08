@@ -30,7 +30,8 @@ router.get("/list", function (req, res, next) {
 // Read selected GameReport
 router.get("/getinfo/:id", function (req, res, next) {
     let gameReport_id = req.params.id;
-    connection.query("SELECT * from gameReport where id = ?", gameReport_id, function (err, results, fields) {
+    // TODO: 선수 이름 필요.
+    connection.query("SELECT * from gameReport where game_id = ?", gameReport_id, function (err, results, fields) {
         if (err) next(err);
         res.send(results);
     });

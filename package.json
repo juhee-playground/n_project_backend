@@ -5,12 +5,12 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "run": "node index",
+    "start": "node index",
     "restart": "pm2 restart",
     "stop": "pm2 stop",
     "list": "pm2 list",
     "kill": "pm2 kill",
-    "start": "pm2 start index.js",
+    "pm2": "pm2 start index.js",
     "monit": "pm2 monit"
   },
   "keywords": [],
