@@ -30,7 +30,16 @@ router.get("/list", function (req, res, next) {
 // Read selected GameReport
 router.get("/getinfo/:id", function (req, res, next) {
     let gameReport_id = req.params.id;
-    connection.query("SELECT * from gameReport where id = ?", gameReport_id, function (err, results, fields) {
+    connection.query("SELECT gameReport.*, gameReport.first_player, gameReport.last_player, \
+                            first_member.name as first_player_name, last_member.name as last_player_name, \
+                            first_member.uniform_number as first_player_uniform_number, last_member.uniform_number as last_player_uniform_number \
+                            from gameReport  \
+                            join member as first_member \
+                            join member as last_member \
+                            where gameReport.game_id = ? \
+                            and gameReport.first_player = first_member.id \
+                            and gameReport.last_player = last_member.id \
+                            ", gameReport_id, function (err, results, fields) {
         if (err) next(err);
         res.send(results);
     });
