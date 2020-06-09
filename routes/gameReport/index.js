@@ -79,9 +79,10 @@ router.put("/update", function (req, res, next) {
 
 // Delete GameReport
 router.delete("/delete", function (req, res, next) {
-    console.log('Delete GameReport', req.body.data);
+    console.log('Delete GameReport', req.body);
     connection.query(
-        `DELETE FROM gameReport WHERE id= ${req.body.data.gameReport_id}`,
+        "DELETE FROM gameReport WHERE id=?",
+        [req.body.gameReport_id],
         function (err, results, fields) {
             if (err) next(err);
             res.send(results);
