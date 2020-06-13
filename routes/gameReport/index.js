@@ -35,14 +35,17 @@ router.get("/getinfo/:id", function (req, res, next) {
                             first_member.uniform_number as first_player_uniform_number, last_member.uniform_number as last_player_uniform_number \
                             from gameReport  \
                             join member as first_member \
-                            join member as last_member \
-                            where gameReport.game_id = ? \
-                            and gameReport.first_player = first_member.id \
-                            and gameReport.last_player = last_member.id \
-                            ", gameReport_id, function (err, results, fields) {
-        if (err) next(err);
-        res.send(results);
-    });
+                            ON gameReport.first_player = first_member.id \
+                            left outer join member as last_member \
+                            ON gameReport.last_player = last_member.id \
+                            where gameReport.game_id = ?\
+                            `,
+    gameReport_id,
+    function (err, results, fields) {
+      if (err) next(err);
+      res.send(results);
+    }
+  );
 });
 
 // Read selected GameReport with game_id
