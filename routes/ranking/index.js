@@ -22,8 +22,8 @@ router.post("/create", function (req, res, next) {
 // Read ranking
 router.get("/list", function (req, res, next) {
   connection.query("SELECT * from ranking", function (err, results, fields) {
-      if (err) next(err);
-      res.send(results);
+    if (err) next(err);
+    res.send(results);
   });
 });
 
@@ -66,17 +66,17 @@ router.delete("/delete", function (req, res, next) {
 
 // Read ranking
 router.get("/goalRanking", function (req, res, next) {
-  
+
   // 전체기간 랭킹
   let sqlQuery = 'select member.name as name, count(*) as score \
   from (select * from gameReport where gameReport.event_type = "Goal") as gameReportGoal \
   join member \
   where gameReportGoal.first_player = member.id \
-  group by gameReportGoal.first_player'
+  group by gameReportGoal.first_player order by score desc'
 
   connection.query(sqlQuery, function (err, results, fields) {
-      if (err) next(err);
-      res.send(results);
+    if (err) next(err);
+    res.send(results);
   });
 });
 
@@ -93,17 +93,17 @@ router.get("/assistRanking", function (req, res, next) {
   from (select * from gameReport where gameReport.event_type = "Goal") as gameReportGoal \
   join member \
   where gameReportGoal.last_player = member.id \
-  group by gameReportGoal.last_player'
+  group by gameReportGoal.last_player order by score desc'
 
   connection.query(sqlQuery, function (err, results, fields) {
-      if (err) next(err);
-      res.send(results);
+    if (err) next(err);
+    res.send(results);
   });
 });
 
 // Read ranking
 router.get("/cleanSheetRanking", function (req, res, next) {
-  
+
   // goal 
   let sqlQueryHome = 'select member.id as id, member.name as name, game.id as game_id \
                     from game \
@@ -135,8 +135,8 @@ router.get("/cleanSheetRanking", function (req, res, next) {
                     ${sqlQueryAway}`
 
   connection.query(totalQuery, function (err, results, fields) {
-      if (err) next(err);
-      res.send(results);
+    if (err) next(err);
+    res.send(results);
   });
 });
 
