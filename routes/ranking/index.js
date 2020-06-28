@@ -69,10 +69,57 @@ router.get("/goalRanking", function (req, res, next) {
 
   // 전체기간 랭킹
   let sqlQuery = 'select member.name as name, count(*) as score \
-  from (select * from gameReport where gameReport.event_type = "Goal") as gameReportGoal \
-  join member \
-  where gameReportGoal.first_player = member.id \
-  group by gameReportGoal.first_player order by score desc'
+                      from (select * from gameReport where gameReport.event_type = "Goal") as gameReportGoal \
+                      join member \
+                      where gameReportGoal.first_player = member.id \
+                      group by gameReportGoal.first_player order by score desc'
+
+  connection.query(sqlQuery, function (err, results, fields) {
+    if (err) next(err);
+    res.send(results);
+  });
+});
+// Read ranking
+router.get("/goalRankingFilter/:contest/:year/:month", function (req, res, next) {
+  let scheduleYear = req.params.year;
+  let scheduleMonth = req.params.month;
+  let contestType = req.params.contest;
+
+  let dateQuery = `DATE_FORMAT(schedule.date, "%Y-%m") = "${scheduleYear}-${scheduleMonth}" and`
+
+  if (scheduleYear =="0" && scheduleMonth == "0"){
+    dateQuery = "";
+  } else if (scheduleYear == "0") {
+    dateQuery = `DATE_FORMAT(schedule.date, "%m") = "${scheduleMonth}" and`;
+  } else if (scheduleMonth == "0") {
+    dateQuery = `DATE_FORMAT(schedule.date, "%Y") = "${scheduleYear}" and`;
+  }
+  // 전체기간 랭킹
+  let sqlQuery = `select member.name as name, count(*) as score \
+                      from (select * from gameReport where gameReport.event_type = "Goal") as gameReportGoal \
+                      join member on gameReportGoal.first_player = member.id \
+                      join game on game.id = gameReportGoal.game_id \
+                      join schedule on schedule.id = game.schedule_id \
+                      where ${dateQuery} \
+                      schedule.type = "${contestType}" \
+                      group by gameReportGoal.first_player order by score desc`
+  console.log("sqlQuery", sqlQuery)
+  connection.query(sqlQuery, function (err, results, fields) {
+    if (err) next(err);
+    res.send(results);
+  });
+});
+
+
+
+// Read ranking
+router.get("/assistRanking", function (req, res, next) {
+
+  let sqlQuery = 'select member.name as name, count(*) as score \
+                    from (select * from gameReport where gameReport.event_type = "Goal") as gameReportGoal \
+                    join member on gameReportGoal.last_player = member.id \
+                    where gameReportGoal.last_player = member.id \
+                    group by gameReportGoal.last_player order by score desc'
 
   connection.query(sqlQuery, function (err, results, fields) {
     if (err) next(err);
@@ -81,54 +128,103 @@ router.get("/goalRanking", function (req, res, next) {
 });
 
 // Read ranking
-router.get("/assistRanking", function (req, res, next) {
-  // 기간을 넣고 싶으면 아래 부분 수행할 것
-  // 0. 최근 1년이든 날짜를 받든지 선택
-  // 1. 날짜 범위에 해당하는 shedule_id 선택 
-  // 2. 스케쥴과 매칭되는 game_id 선택
-  // 3. (모든/일부) game_id에 해당하고
+router.get("/assistRankingFilter/:contest/:year/:month", function (req, res, next) {
+  let scheduleYear = req.params.year;
+  let scheduleMonth = req.params.month;
+  let contestType = req.params.contest;
+  let dateQuery = `DATE_FORMAT(schedule.date, "%Y-%m") = "${scheduleYear}-${scheduleMonth}" and`
 
-  // 전체기간 랭킹
-  let sqlQuery = 'select member.name as name, count(*) as score \
-  from (select * from gameReport where gameReport.event_type = "Goal") as gameReportGoal \
-  join member \
-  where gameReportGoal.last_player = member.id \
-  group by gameReportGoal.last_player order by score desc'
+  if (scheduleYear =="0" && scheduleMonth == "0"){
+    dateQuery = "";
+  } else if (scheduleYear == "0") {
+    dateQuery = `DATE_FORMAT(schedule.date, "%m") = "${scheduleMonth}" and`;
+  } else if (scheduleMonth == "0") {
+    dateQuery = `DATE_FORMAT(schedule.date, "%Y") = "${scheduleYear}" and`;
+  }
+
+  let sqlQuery = `select member.name as name, count(*) as score \
+                    from (select * from gameReport where gameReport.event_type = "Goal") as gameReportGoal \
+                    join member on gameReportGoal.last_player = member.id \
+                    join game on game.id = gameReportGoal.game_id \
+                    join schedule on schedule.id = game.schedule_id \
+                    where ${dateQuery} \
+                    schedule.type = "${contestType}" \
+                    group by gameReportGoal.last_player order by score desc`
 
   connection.query(sqlQuery, function (err, results, fields) {
     if (err) next(err);
     res.send(results);
   });
 });
-
 // Read ranking
 router.get("/cleanSheetRanking", function (req, res, next) {
 
   // goal 
   let sqlQueryHome = 'select member.id as id, member.name as name, game.id as game_id \
-                    from game \
-                    join gameReport \
-                    join squad \
-                    join memberSquad \
-                    join member \
-                    WHERE game.id = gameReport.game_id \
-                    AND game.home_squad_id = squad.id \
-                    AND squad.id = memberSquad.id \
-                    AND memberSquad.position = "GK" \
-                    AND memberSquad.member_id = member.id \
-                    AND (game.home_score = 0 AND game.away_score <> 0)'
+                          from game \
+                            join gameReport on game.id = gameReport.game_id \
+                            join squad on game.home_squad_id = squad.id \
+                            join memberSquad on squad.id = memberSquad.id \
+                            join member on memberSquad.member_id = member.id \
+                          WHERE memberSquad.position = "GK" \
+                            AND (game.home_score = 0 AND game.away_score <> 0)'
   let sqlQueryAway = 'select member.id as id, member.name as name, game.id as game_id \
-                    from game \
-                    join gameReport \
-                    join squad \
-                    join memberSquad \
-                    join member \
-                    WHERE game.id = gameReport.game_id \
-                    AND game.away_squad_id = squad.id \
-                    AND squad.id = memberSquad.id \
-                    AND memberSquad.position = "GK" \
-                    AND memberSquad.member_id = member.id \
-                    AND (game.away_score = 0 AND game.home_score <> 0)'
+                        from game \
+                          join gameReport on game.id = gameReport.game_id \
+                          join squad on game.home_squad_id = squad.id \
+                          join memberSquad on squad.id = memberSquad.id \
+                          join member on memberSquad.member_id = member.id \
+                        WHERE memberSquad.position = "GK" \
+                          AND (game.away_score = 0 AND game.home_score <> 0)'
+
+  let totalQuery = `${sqlQueryHome} \
+                    UNION \
+                    ${sqlQueryAway}`
+
+  connection.query(totalQuery, function (err, results, fields) {
+    if (err) next(err);
+    res.send(results);
+  });
+});
+router.get("/cleanSheetRankingFilter/:contest/:year/:month", function (req, res, next) {
+  
+  let scheduleYear = req.params.year;
+  let scheduleMonth = req.params.month;
+  let contestType = req.params.contest;
+
+  let dateQuery = `DATE_FORMAT(schedule.date, "%Y-%m") = "${scheduleYear}-${scheduleMonth}" and`
+  if (scheduleYear =="0" && scheduleMonth == "0"){
+    dateQuery = "";
+  } else if (scheduleYear == "0") {
+    dateQuery = `DATE_FORMAT(schedule.date, "%m") = "${scheduleMonth}" and`;
+  } else if (scheduleMonth == "0") {
+    dateQuery = `DATE_FORMAT(schedule.date, "%Y") = "${scheduleYear}" and`;
+  }
+  // goal 
+  let sqlQueryHome = `select member.id as id, member.name as name, game.id as game_id \
+                          from game \
+                            join gameReport on game.id = gameReport.game_id \
+                            join squad on game.home_squad_id = squad.id \
+                            join memberSquad on squad.id = memberSquad.id \
+                            join member on memberSquad.member_id = member.id \
+                            join game on game.id = gameReportGoal.game_id \
+                            join schedule on schedule.id = game.schedule_id \
+                          WHERE memberSquad.position = "GK" AND \
+                            ${dateQuery} \
+                            schedule.type = "${contestType}" \
+                            (game.home_score = 0 AND game.away_score <> 0)`
+  let sqlQueryAway = `select member.id as id, member.name as name, game.id as game_id \
+                        from game \
+                          join gameReport on game.id = gameReport.game_id \
+                          join squad on game.home_squad_id = squad.id \
+                          join memberSquad on squad.id = memberSquad.id \
+                          join member on memberSquad.member_id = member.id \
+                          join game on game.id = gameReportGoal.game_id \
+                          join schedule on schedule.id = game.schedule_id \
+                        WHERE memberSquad.position = "GK" AND \
+                          ${dateQuery} \
+                          schedule.type = "${contestType}" \
+                          (game.away_score = 0 AND game.home_score <> 0)`
 
   let totalQuery = `${sqlQueryHome} \
                     UNION \
