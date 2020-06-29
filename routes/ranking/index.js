@@ -164,7 +164,7 @@ router.get("/cleanSheetRanking", function (req, res, next) {
                           from game \
                             join gameReport on game.id = gameReport.game_id \
                             join squad on game.home_squad_id = squad.id \
-                            join memberSquad on squad.id = memberSquad.id \
+                            join memberSquad on squad.id = memberSquad.squad_id \
                             join member on memberSquad.member_id = member.id \
                           WHERE memberSquad.position = "GK" \
                             AND (game.home_score = 0 AND game.away_score <> 0)'
@@ -172,7 +172,7 @@ router.get("/cleanSheetRanking", function (req, res, next) {
                         from game \
                           join gameReport on game.id = gameReport.game_id \
                           join squad on game.home_squad_id = squad.id \
-                          join memberSquad on squad.id = memberSquad.id \
+                          join memberSquad on squad.id = memberSquad.squad_id \
                           join member on memberSquad.member_id = member.id \
                         WHERE memberSquad.position = "GK" \
                           AND (game.away_score = 0 AND game.home_score <> 0)'
@@ -205,7 +205,7 @@ router.get("/cleanSheetRankingFilter/:contest/:year/:month", function (req, res,
                           from game \
                             join gameReport on game.id = gameReport.game_id \
                             join squad on game.home_squad_id = squad.id \
-                            join memberSquad on squad.id = memberSquad.id \
+                            join memberSquad on squad.id = memberSquad.squad_id \
                             join member on memberSquad.member_id = member.id \
                             join game on game.id = gameReportGoal.game_id \
                             join schedule on schedule.id = game.schedule_id \
@@ -217,7 +217,7 @@ router.get("/cleanSheetRankingFilter/:contest/:year/:month", function (req, res,
                         from game \
                           join gameReport on game.id = gameReport.game_id \
                           join squad on game.home_squad_id = squad.id \
-                          join memberSquad on squad.id = memberSquad.id \
+                          join memberSquad on squad.id = memberSquad.squad_id \
                           join member on memberSquad.member_id = member.id \
                           join game on game.id = gameReportGoal.game_id \
                           join schedule on schedule.id = game.schedule_id \
