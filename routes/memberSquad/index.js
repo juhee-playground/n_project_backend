@@ -21,7 +21,9 @@ router.post("/create", function (req, res, next) {
 
 // Create memberSquad
 router.post("/createMultiple", function (req, res, next) {
-  var memberSquadData = req.body;
+  let memberSquadData = req.body;
+  // Remove element whose member_id is null
+  memberSquadData = memberSquadData.filter(element => element[1] != null );
   let sql = 'INSERT INTO memberSquad (`squad_id`, `member_id`,`position`) values ?;'
 //   var memberSquadData = [
 //     [ 7, 2, 'LW'],
