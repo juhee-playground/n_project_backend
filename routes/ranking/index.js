@@ -85,25 +85,19 @@ router.get("/goalRankingFilter/:contest/:year/:month", function (req, res, next)
   let scheduleMonth = req.params.month;
   let contestType = req.params.contest;
 
-  let dateQuery = `DATE_FORMAT(schedule.date, "%Y-%m") = "${scheduleYear}-${scheduleMonth}" and`
-
-  if (scheduleYear =="0" && scheduleMonth == "0"){
-    dateQuery = "";
-  } else if (scheduleYear == "0") {
-    dateQuery = `DATE_FORMAT(schedule.date, "%m") = "${scheduleMonth}" and`;
-  } else if (scheduleMonth == "0") {
-    dateQuery = `DATE_FORMAT(schedule.date, "%Y") = "${scheduleYear}" and`;
+  let whereQuery =  makeWhereQuery(scheduleYear, scheduleMonth, contestType)
+  if (whereQuery !== ""){
+    whereQuery = "where " + whereQuery
   }
+  
   // 전체기간 랭킹
   let sqlQuery = `select member.name as name, count(*) as score \
                       from (select * from gameReport where gameReport.event_type = "Goal") as gameReportGoal \
                       join member on gameReportGoal.first_player = member.id \
                       join game on game.id = gameReportGoal.game_id \
                       join schedule on schedule.id = game.schedule_id \
-                      where ${dateQuery} \
-                      schedule.type = "${contestType}" \
+                      ${whereQuery} \
                       group by gameReportGoal.first_player order by score desc`
-  console.log("sqlQuery", sqlQuery)
   connection.query(sqlQuery, function (err, results, fields) {
     if (err) next(err);
     res.send(results);
@@ -132,23 +126,18 @@ router.get("/assistRankingFilter/:contest/:year/:month", function (req, res, nex
   let scheduleYear = req.params.year;
   let scheduleMonth = req.params.month;
   let contestType = req.params.contest;
-  let dateQuery = `DATE_FORMAT(schedule.date, "%Y-%m") = "${scheduleYear}-${scheduleMonth}" and`
 
-  if (scheduleYear =="0" && scheduleMonth == "0"){
-    dateQuery = "";
-  } else if (scheduleYear == "0") {
-    dateQuery = `DATE_FORMAT(schedule.date, "%m") = "${scheduleMonth}" and`;
-  } else if (scheduleMonth == "0") {
-    dateQuery = `DATE_FORMAT(schedule.date, "%Y") = "${scheduleYear}" and`;
+  let whereQuery =  makeWhereQuery(scheduleYear, scheduleMonth, contestType)
+  if (whereQuery !== ""){
+    whereQuery = "where " + whereQuery
   }
-
+  
   let sqlQuery = `select member.name as name, count(*) as score \
                     from (select * from gameReport where gameReport.event_type = "Goal") as gameReportGoal \
                     join member on gameReportGoal.last_player = member.id \
                     join game on game.id = gameReportGoal.game_id \
                     join schedule on schedule.id = game.schedule_id \
-                    where ${dateQuery} \
-                    schedule.type = "${contestType}" \
+                    ${whereQuery} \
                     group by gameReportGoal.last_player order by score desc`
 
   connection.query(sqlQuery, function (err, results, fields) {
@@ -177,9 +166,12 @@ router.get("/cleanSheetRanking", function (req, res, next) {
                         WHERE memberSquad.position = "GK" \
                           AND (game.away_score = 0 AND game.home_score <> 0)'
 
-  let totalQuery = `${sqlQueryHome} \
+  let totalQuery = `select cleanTable.id as id, cleanTable.name as name, count(*) as score \
+                    from (${sqlQueryHome} \
                     UNION \
-                    ${sqlQueryAway}`
+                    ${sqlQueryAway}) as cleanTable \
+                    group by cleanTable.id order by score desc`
+                    
 
   connection.query(totalQuery, function (err, results, fields) {
     if (err) next(err);
@@ -192,14 +184,11 @@ router.get("/cleanSheetRankingFilter/:contest/:year/:month", function (req, res,
   let scheduleMonth = req.params.month;
   let contestType = req.params.contest;
 
-  let dateQuery = `DATE_FORMAT(schedule.date, "%Y-%m") = "${scheduleYear}-${scheduleMonth}" and`
-  if (scheduleYear =="0" && scheduleMonth == "0"){
-    dateQuery = "";
-  } else if (scheduleYear == "0") {
-    dateQuery = `DATE_FORMAT(schedule.date, "%m") = "${scheduleMonth}" and`;
-  } else if (scheduleMonth == "0") {
-    dateQuery = `DATE_FORMAT(schedule.date, "%Y") = "${scheduleYear}" and`;
+  let whereQuery =  makeWhereQuery(scheduleYear, scheduleMonth, contestType)
+  if (whereQuery !== ""){
+    whereQuery = "and " + whereQuery
   }
+  
   // goal 
   let sqlQueryHome = `select member.id as id, member.name as name, game.id as game_id \
                           from game \
@@ -207,33 +196,65 @@ router.get("/cleanSheetRankingFilter/:contest/:year/:month", function (req, res,
                             join squad on game.home_squad_id = squad.id \
                             join memberSquad on squad.id = memberSquad.squad_id \
                             join member on memberSquad.member_id = member.id \
-                            join game on game.id = gameReportGoal.game_id \
                             join schedule on schedule.id = game.schedule_id \
                           WHERE memberSquad.position = "GK" AND \
-                            ${dateQuery} \
-                            schedule.type = "${contestType}" \
-                            (game.home_score = 0 AND game.away_score <> 0)`
+                            (game.home_score = 0 AND game.away_score <> 0) \
+                            ${whereQuery}`
   let sqlQueryAway = `select member.id as id, member.name as name, game.id as game_id \
                         from game \
                           join gameReport on game.id = gameReport.game_id \
                           join squad on game.home_squad_id = squad.id \
                           join memberSquad on squad.id = memberSquad.squad_id \
                           join member on memberSquad.member_id = member.id \
-                          join game on game.id = gameReportGoal.game_id \
                           join schedule on schedule.id = game.schedule_id \
                         WHERE memberSquad.position = "GK" AND \
-                          ${dateQuery} \
-                          schedule.type = "${contestType}" \
-                          (game.away_score = 0 AND game.home_score <> 0)`
+                          (game.away_score = 0 AND game.home_score <> 0) \
+                          ${whereQuery}`
 
-  let totalQuery = `${sqlQueryHome} \
+  let totalQuery = `select cleanTable.id as id, cleanTable.name as name, count(*) as score \
+                    from (${sqlQueryHome} \
                     UNION \
-                    ${sqlQueryAway}`
+                    ${sqlQueryAway}) as cleanTable \
+                    group by cleanTable.id order by score desc`
 
   connection.query(totalQuery, function (err, results, fields) {
     if (err) next(err);
     res.send(results);
   });
 });
+
+function makeWhereQuery(scheduleYear, scheduleMonth, contestType){
+  console.log("makeWhereQuery", scheduleYear, scheduleMonth, contestType)
+  let whereQuery = ""
+
+  if (scheduleYear =="0" && scheduleMonth == "0"){
+    
+  } else if (scheduleYear == "0") {
+    whereQuery = whereQuery + ` DATE_FORMAT(schedule.date, "%m") = "${scheduleMonth}" `;
+  } else if (scheduleMonth == "0") {
+    whereQuery = whereQuery + ` DATE_FORMAT(schedule.date, "%Y") = "${scheduleYear}" `;
+  } else{
+    whereQuery = whereQuery + ` DATE_FORMAT(schedule.date, "%Y-%m") = "${scheduleYear}-${scheduleMonth}" `
+  }
+
+  if (contestType != "" ){
+    if (whereQuery !== ""){
+      whereQuery = whereQuery + ` and `
+    }
+    contestList = contestType.split(',')
+    whereQuery = whereQuery + "("
+    for (let i in contestList){
+      let singleContest = contestList[i]
+      whereQuery = whereQuery + ` schedule.type = "${singleContest}" `
+      
+      if ( (Number(i)+1) != Number(contestList.length)){
+        whereQuery = whereQuery + " or "
+      }
+    }
+    whereQuery = whereQuery + ")"
+  }
+  
+  return whereQuery
+}
 
 module.exports = router;
