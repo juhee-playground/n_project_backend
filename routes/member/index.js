@@ -103,7 +103,7 @@ router.put("/update", function(req, res, next) {
 router.delete("/delete", function(req, res, next) {
   connection.query(
     "DELETE FROM member WHERE id=?",
-    [req.body.data.member_id],
+    [req.body.member_id],
     function(err, results, fields) {
       if (err) next(err);
       console.log(results);

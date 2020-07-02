@@ -89,10 +89,9 @@ router.put("/update", function (req, res, next) {
 
 // Delete schedule
 router.delete("/delete", function (req, res, next) {
-  console.log(req.body.data);
   connection.query(
     "DELETE FROM schedule WHERE id=?",
-    [req.body.data.schedule_id],
+    [req.body.schedule_id],
     function (err, results, fields) {
       if (err) next(err);
       res.send(results);
