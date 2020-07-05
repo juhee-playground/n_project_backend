@@ -33,12 +33,12 @@ router.get("/list", function (req, res, next) {
 });
 
 // Retrieve stadium with id
-router.get("/stadiums:id", function (req, res, next) {
-  let schedule_id = req.params.id;
-  if (!schedule_id) {
+router.get("/stadium/:id", function (req, res, next) {
+  let stadium_id = req.params.id;
+  if (!stadium_id) {
     return res.status(400).send({
       err: true,
-      message: "Please provide schedule_id"
+      message: "Please provide stadium_id"
     });
   }
   connection.query("SELECT * FROM stadium where id=?", stadium_id, function (err, results, fields) {
@@ -58,7 +58,7 @@ router.get("/stadiums:id", function (req, res, next) {
 router.put("/update", function(req, res, next) {
   let stadium_id = req.body.stadium_id;
   let stadium = req.body.stadium;
-
+  
   if (!stadium_id || !stadium) {
     return res.status(400).send({
       err: stadium,
