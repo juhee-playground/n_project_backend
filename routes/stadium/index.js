@@ -38,6 +38,27 @@ router.get("/stadiums:id", function (req, res, next) {
 })
 
 
+//  Update stadium with id
+router.put("/update", function(req, res, next) {
+  let stadium_id = req.body.stadium_id;
+  let stadium = req.body.stadium;
+
+  if (!stadium_id || !stadium) {
+    return res.status(400).send({
+      err: stadium,
+      message: "Please provide stadium and stadium_id"
+    });
+  }
+
+  connection.query(
+    "UPDATE stadium SET ? WHERE id = ?",
+    [stadium, stadium_id],
+    function(err, results, fields) {
+      if (err) next(err);
+      res.send(results);
+    }
+  );
+});
 
 
 
