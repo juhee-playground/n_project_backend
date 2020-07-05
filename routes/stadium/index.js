@@ -8,6 +8,22 @@ router.get("/", function (req, res, next) {
   res.send("Update stadium World");
 });
 
+// Create stadium
+router.post("/create", function(req, res, next) {
+  var stadiumData = req.body;
+  // stadiumData.created_at = new Date();
+  connection.query("INSERT INTO stadium SET ?", stadiumData, function(
+    err,
+    results,
+    fields
+  ) {
+    if (err) next(err);
+
+    console.log(results.insertId);
+    res.send(JSON.stringify(results));
+  });
+});
+
 // Read stadium
 router.get("/list", function (req, res, next) {
   connection.query("SELECT * from stadium", function (err, results, fields) {
@@ -60,7 +76,7 @@ router.put("/update", function(req, res, next) {
   );
 });
 
-// Delete Member
+// Delete stadium
 router.delete("/delete", function(req, res, next) {
   connection.query(
     "DELETE FROM stadium WHERE id=?",
