@@ -60,6 +60,20 @@ router.put("/update", function(req, res, next) {
   );
 });
 
+// Delete Member
+router.delete("/delete", function(req, res, next) {
+  connection.query(
+    "DELETE FROM stadium WHERE id=?",
+    [req.body.stadium_id],
+    function(err, results, fields) {
+      if (err) next(err);
+      console.log(results);
+      res.send(results);
+    }
+  );
+});
+
+
 
 
 
