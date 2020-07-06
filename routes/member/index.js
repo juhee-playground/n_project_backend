@@ -45,7 +45,7 @@ function getClientIp(req) {
 // Read Member
 router.get("/list", function(req, res, next) {
   let ipAddress = getClientIp(req)
-  connection.query("SELECT * from member where level IN (1,2)", function(err, results, fields) {
+  connection.query("SELECT * from member where grade IN (1,2)", function(err, results, fields) {
     if (err) next(err);
     res.send(results);
   });
