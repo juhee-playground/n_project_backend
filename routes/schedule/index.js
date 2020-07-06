@@ -25,10 +25,13 @@ router.get("/list", function (req, res, next) {
     "SELECT schedule.id, date_format(schedule.date,'%Y-%m-%d') as date, \
         schedule.type, schedule.start_time as start, schedule.end_time as end, \
         schedule.name, schedule.stadium_id,\
-        stadium.name as stadium_name, stadium.address \
+        stadium.name as stadium_name, stadium.address, \
+        count(game.id) as game_count \
         FROM schedule \
         INNER JOIN stadium as stadium \
         ON schedule.stadium_id = stadium.id \
+        LEFT JOIN game ON game.schedule_id = schedule.id \
+        group by schedule.id \
         order by date",
     function (err, results, fields) {
       if (err) next(err);
