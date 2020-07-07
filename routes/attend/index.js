@@ -8,7 +8,7 @@ router.get("/", function (req, res, next) {
   res.send("Update attend World");
 });
 
-// Read atttnedance count 
+// Read attendance count 
 router.post("/count/threeMonths", function (req, res, next) {
   console.log(req.body);
   let date = req.body.standard_date;
@@ -28,7 +28,23 @@ router.post("/count/threeMonths", function (req, res, next) {
   });
 });
 
-// Read atttnedance count 
+// Read attendance count 
+router.post("/countByYear", function (req, res, next) {
+
+  let query = `select member.id, member.name, count(*) as count, date_format(schedule.date, '%Y') as year \
+                from attend \
+                join schedule \ 
+                  on attend.schedule_id = schedule.id	\
+                right join member \
+                  on member.id = attend.member_id \
+                GROUP BY member.id, year order by count desc`
+  connection.query(query, function (err, results, fields) {
+    if (err) next(err);
+    res.send(results);
+  });
+});
+
+// Read attendance count 
 router.get("/allCount", function (req, res, next) {
   let query = "SELECT count(id) as count, date_format(date, '%Y') as year \
                       FROM nnnn.schedule \
