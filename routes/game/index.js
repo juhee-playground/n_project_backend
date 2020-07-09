@@ -36,11 +36,35 @@ router.get("/getinfo/:id", function (req, res, next) {
     });
 });
 
+//Read selected multiflexGameInfo => schdule_date, stadium, gameInfo
+router.get("/getMultiplexInfo/:id", function (req, res, next) {
+    let game_id = req.params.id;
+    connection.query("SELECT schedule.id as schedule_id, schedule.type, schedule.date, stadium.id as stadium_id, stadium.name as stadium_name, \
+                      game.id as game_id, game.quarter, game.home_squad_id, game.away_squad_id, game.home_score, game.away_score, game.result \
+                      FROM schedule \
+                      INNER JOIN stadium ON schedule.stadium_id = stadium.id \
+                      INNER JOIN game ON schedule.id = game.schedule_id \
+                      where game.id = ?", game_id, function (err, results, fields) {
+        if (err) next(err);
+        res.send(results);
+    });
+});
+
 // Read Game
 router.post("/searchWithScheduleIdAndQuarter", function (req, res, next) {
     let schedule_id = req.body.schedule_id;
     let quarter = req.body.quarter;
     let query = `SELECT * from game where schedule_id=${schedule_id} and quarter=${quarter}`
+    connection.query(query, function (err, results, fields) {
+        if (err) next(err);
+        res.send(results);
+    });
+});
+
+// Read Game search filtering schedule_id 
+router.post("/searchWithScheduleId", function (req, res, next) {
+    let schedule_id = req.body.schedule_id;
+    let query = `SELECT * from game where schedule_id=${schedule_id}`
     connection.query(query, function (err, results, fields) {
         if (err) next(err);
         res.send(results);
