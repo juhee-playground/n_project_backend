@@ -50,6 +50,39 @@ router.get("/getMultiplexInfo/:id", function (req, res, next) {
     });
 });
 
+router.get("/getHomeTeamInfoWithGameId/:id", function (req, res, next) {
+    let game_id = req.params.id;
+    connection.query(
+    " SELECT member.name, member.id, memberSquad.position \
+        FROM game \
+        INNER JOIN memberSquad ON game.home_squad_id = memberSquad.squad_id \
+        INNER JOIN member ON member.id = memberSquad.member_id \
+        where game.id = ? ",
+        game_id,
+        function (err, results, fields) {
+        if (err) next(err);
+        res.send(results);
+        }
+    );
+});
+
+router.get("/getAwayTeamInfoWithGameId/:id", function (req, res, next) {
+    let game_id = req.params.id;
+    connection.query(
+    " SELECT member.name, member.id, memberSquad.position \
+        FROM game \
+        INNER JOIN memberSquad ON game.away_squad_id = memberSquad.squad_id \
+        INNER JOIN member ON member.id = memberSquad.member_id \
+        where game.id = ? ",
+        game_id,
+        function (err, results, fields) {
+        if (err) next(err);
+        res.send(results);
+        }
+    );
+});
+  
+
 // Read Game
 router.post("/searchWithScheduleIdAndQuarter", function (req, res, next) {
     let schedule_id = req.body.schedule_id;
