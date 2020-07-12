@@ -102,4 +102,50 @@ router.delete("/delete", function (req, res, next) {
   );
 });
 
+// List Members
+// Retrieve schedule with id
+router.get("/getAttendList/:year/:month", function (req, res, next) {
+  let year = req.params.year; // year는 4자리
+  let month = req.params.month; // month는 2자리 zerofill
+  if (!year || !month) {
+    return res.status(400).send({
+      err: true,
+      message: "Please provide Year & Month"
+    });
+  }
+  let yearMonth = year + month
+  connection.query(`SELECT * from \
+                     ((SELECT game.id as game_id, schedule.id as schedule_id, member.name as home_member_name, null as away_member_name \
+                        FROM schedule \
+                        join game on game.schedule_id = schedule.id \
+                        join gameReport on gameReport.game_id = game.id \
+                        join squad on squad.id = game.home_squad_id \
+                        join memberSquad on memberSquad.squad_id = squad.id \
+                        join member on member.id = memberSquad.member_id \
+                        where date_format(date,"%Y%m") = ${yearMonth}) \
+                    UNION ALL \
+                      (SELECT game.id as game_id, schedule.id as schedule_id, null as home_member_name, member.name as away_member_name \
+                        FROM schedule \
+                        join game on game.schedule_id = schedule.id  \
+                        join gameReport on gameReport.game_id = game.id \
+                        join squad on squad.id = game.away_squad_id     \
+                        join memberSquad on memberSquad.squad_id = squad.id  \
+                        join member on member.id = memberSquad.member_id \
+                        where date_format(date,"%Y%m") = ${yearMonth})) as content`, 
+      function (err, results, fields) {
+        if (err) next(err);
+        if (results.length == 0) {
+          res.status(400).send({
+            err:true, 
+            message:"No Result Found"
+          }) 
+        }
+        res.send(results);
+      }
+    )
+  });
+
+
+
+
 module.exports = router;
