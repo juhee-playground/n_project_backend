@@ -44,8 +44,15 @@ function getClientIp(req) {
 
 // Read Member
 router.get("/list", function(req, res, next) {
-  let ipAddress = getClientIp(req)
   connection.query("SELECT * from member where grade IN (1,2)", function(err, results, fields) {
+    if (err) next(err);
+    res.send(results);
+  });
+});
+
+// Read Member
+router.get("/allMemberList", function(req, res, next) {
+  connection.query("SELECT id, name, position, uniform_number, DATE_FORMAT(join_date, '%Y-%m-%d') as join_date, nick_name, grade, level, team_id, DATE_FORMAT(withdraw_date, '%Y-%m-%d') as withdraw_date from member", function(err, results, fields) {
     if (err) next(err);
     res.send(results);
   });
