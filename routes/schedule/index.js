@@ -13,7 +13,11 @@ router.post("/create", function (req, res, next) {
   var scheduleData = req.body;
 
   console.log(scheduleData);
-  connection.query("INSERT INTO schedule SET ?", scheduleData, function (err, results, fields) {
+  connection.query("INSERT INTO schedule SET ?", scheduleData, function (
+    err,
+    results,
+    fields
+  ) {
     if (err) next(err);
     res.send(results);
   });
@@ -92,6 +96,37 @@ router.post("/gameAttendCountByYear/:mebmerId", function (req, res, next) {
                     on nnnn.member.id = nnnn.memberSquad.member_id \
                   WHERE member.id = ${memberId} \
                   GROUP BY member.id, year order by count desc`;
+  connection.query(query, function (err, results, fields) {
+    if (err) next(err);
+    res.send(results);
+  });
+});
+
+router.post("/gameAttendCountByYearAndPosition/:mebmerId", function (
+  req,
+  res,
+  next
+) {
+  let memberId = req.params.mebmerId;
+  if (!memberId) {
+    return res.status(400).send({
+      err: true,
+      message: "Please provide memberId",
+    });
+  }
+  let query = `select member.id, member.name, count(*) as count, date_format(schedule.date, '%Y') as year, memberSquad.position as position \
+                  from nnnn.game as game \
+                    join nnnn.schedule as schedule \
+                    on game.schedule_id = schedule.id	 \
+                  join nnnn.squad as squad \
+                    on nnnn.squad.id = nnnn.game.home_squad_id  \
+                    or nnnn.squad.id = nnnn.game.away_squad_id  \
+                  join nnnn.memberSquad  \
+                    on nnnn.memberSquad.squad_id = nnnn.squad.id \
+                  join nnnn.member as member \
+                    on nnnn.member.id = nnnn.memberSquad.member_id \
+                  WHERE member.id = ${memberId} \
+                  GROUP BY member.id, position, year order by count desc`;
   connection.query(query, function (err, results, fields) {
     if (err) next(err);
     res.send(results);
