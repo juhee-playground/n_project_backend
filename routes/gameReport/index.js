@@ -66,6 +66,48 @@ router.get("/getInfoWithGameId/:id", function (req, res, next) {
   );
 });
 
+router.get("/getGoalCountByYear/:id", function (req, res, next) {
+  let memberId = req.params.id;
+  connection.query(
+    `SELECT member.id, member.name, count(*) as count, date_format(schedule.date, '%Y') as year \
+        FROM gameReport \
+        join game \
+          on game.id = gameReport.game_id \
+          join schedule \
+          on schedule.id = game.schedule_id \
+          join member \
+          on member.id = gameReport.first_player \
+        WHERE gameReport.event_type = "Goal" and member.id = ? \
+        GROUP BY member.id, year order by count desc`,
+    memberId,
+    function (err, results, fields) {
+      if (err) next(err);
+      res.send(results);
+    }
+  );
+});
+
+router.get("/getAssistCountByYear/:id", function (req, res, next) {
+  let memberId = req.params.id;
+  connection.query(
+    `SELECT member.id, member.name, count(*) as count, date_format(schedule.date, '%Y') as year \
+        FROM gameReport \
+        join game \
+          on game.id = gameReport.game_id \
+          join schedule \
+          on schedule.id = game.schedule_id \
+          join member \
+          on member.id = gameReport.last_player \
+        WHERE gameReport.event_type = "Goal" and member.id = ? \
+        GROUP BY member.id, year order by count desc`,
+    memberId,
+    function (err, results, fields) {
+      if (err) next(err);
+      res.send(results);
+    }
+  );
+});
+
 //  Update GameReport with id
 router.put("/update", function (req, res, next) {
   console.log("GameReport Update", req.body);
@@ -75,7 +117,7 @@ router.put("/update", function (req, res, next) {
   if (!gameReport_id || !gameReport) {
     return res.status(400).send({
       err: gameReport,
-      message: "Please provide gameReport and gameReport_id"
+      message: "Please provide gameReport and gameReport_id",
     });
   }
 
