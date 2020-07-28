@@ -40,30 +40,61 @@ router.get("/list", function (req, res, next) {
   );
 });
 
-
 // Retrieve schedule with id
 router.get("/getInfo/:id", function (req, res, next) {
   let schedule_id = req.params.id;
   if (!schedule_id) {
     return res.status(400).send({
       err: true,
-      message: "Please provide schedule_id"
+      message: "Please provide schedule_id",
     });
   }
-  connection.query("SELECT schedule.id, schedule.name, date_format(schedule.date,'%Y-%m-%d') as date, \
+  connection.query(
+    "SELECT schedule.id, schedule.name, date_format(schedule.date,'%Y-%m-%d') as date, \
         date_format(schedule.start_time, '%H:%i') as start_time, \
         date_format(schedule.end_time, '%H:%i') as end_time, schedule.type, \
         stadium.id as stadium_id, stadium.name as place, stadium.address, stadium.nick_name FROM schedule \
         INNER JOIN stadium ON schedule.stadium_id = stadium.id \
-        where schedule.id=?", schedule_id, function (err, results, fields) {
-    if (err) next(err);
-    if (results.length == 0) {
-      res.status(400).send({
-        err:true, 
-        message:"No Result Found"
-      }) 
+        where schedule.id=?",
+    schedule_id,
+    function (err, results, fields) {
+      if (err) next(err);
+      if (results.length == 0) {
+        res.status(400).send({
+          err: true,
+          message: "No Result Found",
+        });
+      }
+      res.send(results[0]);
     }
-    res.send(results[0]);
+  );
+});
+
+// Read game Attendance count
+router.post("/gameAttendCountByYear/:mebmerId", function (req, res, next) {
+  let memberId = req.params.mebmerId;
+  if (!memberId) {
+    return res.status(400).send({
+      err: true,
+      message: "Please provide memberId",
+    });
+  }
+  let query = `select member.id, member.name, count(*) as count, date_format(schedule.date, '%Y') as year \
+                  from nnnn.game as game \
+                    join nnnn.schedule as schedule \
+                    on game.schedule_id = schedule.id	 \
+                  join nnnn.squad as squad \
+                    on nnnn.squad.id = nnnn.game.home_squad_id  \
+                    or nnnn.squad.id = nnnn.game.away_squad_id  \
+                  join nnnn.memberSquad  \
+                    on nnnn.memberSquad.squad_id = nnnn.squad.id \
+                  join nnnn.member as member \
+                    on nnnn.member.id = nnnn.memberSquad.member_id \
+                  WHERE member.id = ${memberId} \
+                  GROUP BY member.id, year order by count desc`;
+  connection.query(query, function (err, results, fields) {
+    if (err) next(err);
+    res.send(results);
   });
 });
 
@@ -76,7 +107,7 @@ router.put("/update", function (req, res, next) {
   if (!schedule_id || !schedule) {
     return res.status(400).send({
       err: schedule,
-      message: "Please provide schedule and schedule_id"
+      message: "Please provide schedule and schedule_id",
     });
   }
 
@@ -110,11 +141,12 @@ router.get("/getAttendList/:year/:month", function (req, res, next) {
   if (!year || !month) {
     return res.status(400).send({
       err: true,
-      message: "Please provide Year & Month"
+      message: "Please provide Year & Month",
     });
   }
-  let yearMonth = year + month
-  connection.query(`SELECT * from \
+  let yearMonth = year + month;
+  connection.query(
+    `SELECT * from \
                      ((SELECT game.id as game_id, schedule.id as schedule_id, member.name as home_member_name, null as away_member_name \
                         FROM schedule \
                         join game on game.schedule_id = schedule.id \
@@ -131,21 +163,18 @@ router.get("/getAttendList/:year/:month", function (req, res, next) {
                         join squad on squad.id = game.away_squad_id     \
                         join memberSquad on memberSquad.squad_id = squad.id  \
                         join member on member.id = memberSquad.member_id \
-                        where date_format(date,"%Y%m") = ${yearMonth})) as content`, 
-      function (err, results, fields) {
-        if (err) next(err);
-        if (results.length == 0) {
-          res.status(400).send({
-            err:true, 
-            message:"No Result Found"
-          }) 
-        }
-        res.send(results);
+                        where date_format(date,"%Y%m") = ${yearMonth})) as content`,
+    function (err, results, fields) {
+      if (err) next(err);
+      if (results.length == 0) {
+        res.status(400).send({
+          err: true,
+          message: "No Result Found",
+        });
       }
-    )
-  });
-
-
-
+      res.send(results);
+    }
+  );
+});
 
 module.exports = router;
