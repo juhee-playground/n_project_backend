@@ -108,6 +108,46 @@ router.get("/getAssistCountByYear/:id", function (req, res, next) {
   );
 });
 
+router.get("/countOtherMemberWithGoalAssist/:memberId/:year", function (
+  req,
+  res,
+  next
+) {
+  let memberId = req.params.memberId;
+  let year = req.params.year;
+  connection.query(
+    `select chemi.player, count(*) from \
+    (
+    select gameReport.id, gameReport.last_player as player \
+      from game  \
+      join schedule \
+        on schedule.id = game.schedule_id \
+      join gameReport \
+        on gameReport.game_id = game.id \
+      where gameReport.event_type = "Goal" \
+        and gameReport.first_player = ${memberId}  \
+            and DATE_FORMAT(schedule.date, "%Y") = ${year} \
+            and gameReport.last_player != null \
+    UNION  \
+    select gameReport.id, gameReport.first_player as player  \
+      from game  \
+      join schedule \
+        on schedule.id = game.schedule_id \
+      join gameReport \
+        on gameReport.game_id = game.id \
+      where gameReport.event_type = "Goal"  \
+        and gameReport.last_player = ${memberId}	 \
+        and DATE_FORMAT(schedule.date, "%Y") = ${year} \
+    ) as chemi \
+    group by chemi.player`,
+    memberId,
+    function (err, results, fields) {
+      if (err) next(err);
+      res.send(results);
+    }
+  );
+});
+
 //  Update GameReport with id
 router.put("/update", function (req, res, next) {
   console.log("GameReport Update", req.body);
