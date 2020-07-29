@@ -140,7 +140,49 @@ router.get("/countOtherMemberWithGoalAssist/:memberId/:year", function (
         and DATE_FORMAT(schedule.date, "%Y") = ${year} \
     ) as chemi \
     group by chemi.player`,
-    memberId,
+    function (err, results, fields) {
+      if (err) next(err);
+      res.send(results);
+    }
+  );
+});
+
+router.get("/countOtherMemberWithWinning/:memberId/:year", function (
+  req,
+  res,
+  next
+) {
+  let memberId = req.params.memberId;
+  let year = req.params.year;
+  connection.query(
+    `select result.member_id, count(*) as winCount \
+      from \
+      (select homeGame.id, memberSquad.member_id \
+        from (select * from memberSquad where memberSquad.member_id = ${memberId}) as filterMemberSquad \
+          join squad \
+          on squad.id = filterMemberSquad.squad_id	 \
+        join (select * from game where game.result = "H") as homeGame \
+          on homeGame.home_squad_id = squad.id \
+        join (select * from schedule where DATE_FORMAT(schedule.date, "%Y") = ${year}) as selectedSchedule \
+          on selectedSchedule.id = homeGame.schedule_id	\
+        join memberSquad \
+          on memberSquad.squad_id = squad.id \
+        where memberSquad.member_id != ${memberId}	\
+      UNION \
+      select awayGame.id, memberSquad.member_id \
+        from (select * from memberSquad where memberSquad.member_id = ${memberId}) as filterMemberSquad \
+          join squad \
+          on squad.id = filterMemberSquad.squad_id	 \
+        join (select * from game where game.result = "A") as awayGame \
+          on awayGame.away_squad_id = squad.id         \
+        join (select * from schedule where DATE_FORMAT(schedule.date, "%Y") = ${year}) as selectedSchedule \
+          on selectedSchedule.id = awayGame.schedule_id		     \
+        join memberSquad \
+          on memberSquad.squad_id = squad.id \
+        where memberSquad.member_id != ${memberId} \
+      ) as result  \
+      group by member_id \
+      order by winCount desc`,
     function (err, results, fields) {
       if (err) next(err);
       res.send(results);
