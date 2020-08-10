@@ -3,6 +3,8 @@ const connection = require("../../custom_lib/db_connection");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 
+const encrypt = require("../../config/encrypt");
+const secret = encrypt.secret;
 const router = express.Router();
 
 router.get("/", function (req, res, next) {
@@ -12,8 +14,6 @@ router.get("/", function (req, res, next) {
 // Create Attend
 router.post("/register", function (req, res, next) {
   var userData = req.body; // {name, password}
-
-  const secret = "apple"; // FIXME: 비밀키 외부노출이 되면 안됨 .gitignore에 있을 것 https://victorydntmd.tistory.com/116
 
   const encryptPassword = crypto
     .createHmac("sha1", secret)
@@ -38,7 +38,6 @@ router.post("/register", function (req, res, next) {
 router.post("/login", function (req, res, next) {
   var userData = req.body; // {name, password}
   // jwt 토큰 발생
-  const secret = "apple"; // FIXME: 비밀키 외부노출이 되면 안됨 .gitignore에 있을 것 https://victorydntmd.tistory.com/116
   const token = jwt.sign(
     { name: userData.name }, // 여기에 password가 들어가있으면 token인증시 password를 노출하게 된다 그러므로 넣지말자
     secret,
@@ -77,7 +76,6 @@ router.post("/login", function (req, res, next) {
 router.get("/check/:token", function (req, res, next) {
   // read the token from header or url
   const token = req.headers["x-access-token"] || req.params.token;
-  const secret = "apple"; // FIXME: 비밀키 외부노출이 되면 안됨 .gitignore에 있을 것 https://victorydntmd.tistory.com/116
 
   // token does not exist
   if (!token) {
