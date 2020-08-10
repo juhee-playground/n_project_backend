@@ -112,3 +112,4 @@ package-lock.json
 
 ### Config ###
 .config/encrypt.js
+config/encrypt.js
