@@ -109,3 +109,6 @@ typings/
 ### PhpStorm ###
 .idea
 package-lock.json
+
+### Config ###
+.config/encrypt.js
