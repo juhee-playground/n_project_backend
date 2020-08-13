@@ -74,6 +74,12 @@ router.post("/login", function (req, res, next) {
   );
 });
 
+router.post("/logout", function(req,res,next){
+  // read the token from header or url
+  const token = req.headers["x-access-token"] || req.query.token;
+  jwt.destroy(token)
+});
+
 router.use("/check", authMiddleware);
 router.get("/check", function (req, res, next) {
   res.json({
