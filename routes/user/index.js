@@ -43,7 +43,7 @@ router.post("/login", function (req, res, next) {
     { name: userData.name }, // 여기에 password가 들어가있으면 token인증시 password를 노출하게 된다 그러므로 넣지말자
     secret,
     {
-      expiresIn: "1d", // 하루 5m 은 5분
+      expiresIn: "3h", // 하루 5m 은 5분
       issuer: "nnnn.com",
       subject: "userInfo",
     }
@@ -72,12 +72,6 @@ router.post("/login", function (req, res, next) {
       res.send({ token });
     }
   );
-});
-
-router.post("/logout", function(req,res,next){
-  // read the token from header or url
-  const token = req.headers["x-access-token"] || req.query.token;
-  jwt.destroy(token)
 });
 
 router.use("/check", authMiddleware);
