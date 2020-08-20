@@ -44,6 +44,9 @@ var gameReportRouter = require('./routes/gameReport');
 app.use('/api/gameReport', gameReportRouter)
 var memberRankingRouter = require('./routes/ranking');
 app.use('/api/ranking', memberRankingRouter)
+var userRouter = require('./routes/user');
+app.use('/api/user', userRouter)
+
 
 app.use(logHandler);
 app.use(errorHandler);
