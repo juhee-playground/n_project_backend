@@ -15,7 +15,7 @@ router.get("/", function (req, res, next) {
 // Create Attend
 router.post("/register", function (req, res, next) {
   var userData = req.body; // {name, password}
-
+  console.log("userData: ", userData);
   const encryptPassword = crypto
     .createHmac("sha1", secret)
     .update(userData.password)
@@ -29,49 +29,76 @@ router.post("/register", function (req, res, next) {
     fields
   ) {
     if (err) next(err);
-
     // respond to the client
     res.send(results);
   });
 });
 
+
 // Create Attend
 router.post("/login", function (req, res, next) {
-  var userData = req.body; // {name, password}
-  // jwt 토큰 발생
-  const token = jwt.sign(
-    { name: userData.name }, // 여기에 password가 들어가있으면 token인증시 password를 노출하게 된다 그러므로 넣지말자
-    secret,
-    {
-      expiresIn: "3h", // 하루 5m 은 5분
-      issuer: "nnnn.com",
-      subject: "userInfo",
-    }
-  );
-
-  connection.query(
-    `SELECT * FROM user WHERE ?`,
-    { name: userData.name },
-    function (err, results, fields) {
-      if (err) next(err);
-
-      const result = JSON.parse(JSON.stringify(results)); // https://stackoverflow.com/questions/31221980/how-to-access-a-rowdatapacket-object
-
-      if (result.length == 0) {
-        res.status(500).send("No Matching UserName");
-      } else if (result) {
+    const account = {};
+    console.log(req.body);
+    account.userId = req.body.userId;
+    account.password = req.body.password;
+    if (account.userId) {
+      connection.query(`SELECT * FROM user WHERE userId = "${account.userId}"`, function (error, results, fields) {
+        if (error) {
+          console.log(error);
+        }
         const decryptedPassword = crypto
           .createHmac("sha1", secret)
-          .update(userData.password)
+          .update(account.password)
           .digest("base64");
-        if (result[0].password !== decryptedPassword) {
-          res.status(500).send("Password is Wrong");
+
+        const signature = {
+          "header": {
+            typ: "JWT",
+            alg: "HS256"
+          },
+          "payload": {
+            exp: 1480849147370,
+            id: results.userId,
+            name: results.name,
+            member_id: results.member_id,
+            team_id: results.team_id
+          }
+        };
+
+        if (results.length > 0 && decryptedPassword == results[0].password) {
+          const getToken = new Promise((resolve, reject) => {
+            jwt.sign(
+              signature,
+              secret,
+              (err, token) => {
+                if (err) reject(err)
+                resolve(token)
+              })
+          });
+          
+          getToken.then(
+            token => {
+              res.status(200).json({
+                "status": 200,
+                "message": 'login success',
+                "Authorization": token
+              });
+            }
+          );
+        }else {
+          console.log("password 가 틀림");
+          res.status(400).json({
+            'status': 400,
+            'message': 'password 가 정확하지 않습니다.'
+          });
         }
-      }
-      res.cookie("user", token);
-      res.send({ token });
+      });
+    } else {
+      res.status(400).json({
+        'status': 400,
+        'message': '일치하는 id값이 없습니다.'
+      });
     }
-  );
 });
 
 router.use("/check", authMiddleware);
@@ -80,6 +107,15 @@ router.get("/check", function (req, res, next) {
     success: true,
     info: req.decoded,
   });
+});
+
+router.get("/dupulicated/:id", function(req, res, next) {
+  console.log("req.params.id", req.params.id);
+  let userID = req.params.id;
+  connection.query("SELECT id FROM user where userId = ?", userID, function(err, results, fields) {
+    if(err) next(err);
+    res.send(results);
+  })
 });
 
 // Delete Attend
