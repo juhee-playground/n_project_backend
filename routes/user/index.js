@@ -42,7 +42,8 @@ router.post("/login", function (req, res, next) {
     account.userId = req.body.userId;
     account.password = req.body.password;
     if (account.userId) {
-      connection.query(`SELECT * FROM user WHERE userId = "${account.userId}"`, function (error, results, fields) {
+      connection.query(`SELECT * FROM user WHERE userId = "${account.userId}"`, 
+      function (error, results, fields) {
         if (error) {
           console.log(error);
         }
@@ -50,20 +51,30 @@ router.post("/login", function (req, res, next) {
           .createHmac("sha1", secret)
           .update(account.password)
           .digest("base64");
-
+          
+        console.log("results", results[0]);
+        const id = results[0]["userId"];
+        const name = results[0]["name"];
+        const member_id = results[0]["member_id"];
+        const team_id = results[0]["team_id"];
+        const exp = 1480849147370;
+        
+        console.log("name", name);
+          
         const signature = {
-          "header": {
+          header: {
             typ: "JWT",
             alg: "HS256"
           },
-          "payload": {
-            exp: 1480849147370,
-            id: results.userId,
-            name: results.name,
-            member_id: results.member_id,
-            team_id: results.team_id
+          payload: {
+            id,
+            name,
+            member_id,
+            team_id,
+            exp
           }
         };
+        console.log("signature", signature);
 
         if (results.length > 0 && decryptedPassword == results[0].password) {
           const getToken = new Promise((resolve, reject) => {
@@ -81,7 +92,7 @@ router.post("/login", function (req, res, next) {
               res.status(200).json({
                 "status": 200,
                 "message": 'login success',
-                "Authorization": token
+                "Authorization": 'Bearer ' + token
               });
             }
           );
