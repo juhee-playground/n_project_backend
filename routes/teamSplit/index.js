@@ -115,7 +115,7 @@ router.post("/bulkCreateOrUpdate", async function (req, res, next) {
                     let member_info = teamSplit_list[i];
                     let member_id = member_info.id;
                     let team_number = member_info.teamNumber;
-                    query_result = await transaction_conn.query(`insert into teamSplit set ? on duplicate key update 
+                    let [rows] = await transaction_conn.query(`insert into teamSplit set ? on duplicate key update 
                                                                  team_split_index = ?, schedule_id=?, team_number=?`, 
                                             [
                                                team_split_index, 
