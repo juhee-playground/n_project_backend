@@ -17,12 +17,13 @@ router.post("/count/threeMonths", function (req, res, next) {
   let query = `select member.name, member.id, COUNT(attend.schedule_id) as count \
                 from attend \
                   join  \
-                  (select * from schedule where date_format(schedule.date, '%Y%m') >= ${beforeDate} and date_format(schedule.date, '%Y%m') < ${date}) as schedule \
+                  (select * from schedule where date_format(schedule.date, '%Y%m') >= ? and date_format(schedule.date, '%Y%m') < ?) as schedule \
                     on attend.schedule_id = schedule.id	\
                     right join member \
                   on member.id = attend.member_id \
                   GROUP BY member.id order by count desc`
-  connection.query(query, function (err, results, fields) {
+  let dataList = [beforeDate, date]
+  connection.query(query, dataList, function (err, results, fields) {
     if (err) next(err);
     res.send(results);
   });
@@ -67,10 +68,10 @@ router.get("/getattendList/:id", function (req, res, next) {
   let query = `SELECT * \
               from attend as at \
               join member as mb \
-              where at.schedule_id = ${schedule_id}\
+              where at.schedule_id = ?\
               and at.member_id = mb.id`
-
-  connection.query(query, function (err, results, fields) {
+  let dataList = [schedule_id]
+  connection.query(query, dataList, function (err, results, fields) {
     if (err) next(err);
     res.send(results);
   })
@@ -79,8 +80,10 @@ router.get("/getattendList/:id", function (req, res, next) {
 // Delete Attend
 router.delete("/delete", function (req, res, next) {
   console.log('Delete attend', req.body);
+  let query = `DELETE FROM attend WHERE member_id= ? and schedule_id = ?`
+  let dataList = [req.body.member_id, req.body.schedule_id]
   connection.query(
-    `DELETE FROM attend WHERE member_id= ${req.body.member_id} and schedule_id = ${req.body.schedule_id}`,
+    query, dataList,
     function (err, results, fields) {
       if (err) next(err);
       res.send(results);

@@ -87,8 +87,9 @@ router.get("/getAwayTeamInfoWithGameId/:id", function (req, res, next) {
 router.post("/searchWithScheduleIdAndQuarter", function (req, res, next) {
     let schedule_id = req.body.schedule_id;
     let quarter = req.body.quarter;
-    let query = `SELECT * from game where schedule_id=${schedule_id} and quarter=${quarter}`
-    connection.query(query, function (err, results, fields) {
+    let query = `SELECT * from game where schedule_id=? and quarter=?`
+    let dataList = [schedule_id, quarter]
+    connection.query(query, dataList, function (err, results, fields) {
         if (err) next(err);
         res.send(results);
     });
@@ -97,8 +98,8 @@ router.post("/searchWithScheduleIdAndQuarter", function (req, res, next) {
 // Read Game search filtering schedule_id 
 router.post("/searchWithScheduleId", function (req, res, next) {
     let schedule_id = req.body.schedule_id;
-    let query = `SELECT * from game where schedule_id=${schedule_id}`
-    connection.query(query, function (err, results, fields) {
+    let query = `SELECT * from game where schedule_id=?`
+    connection.query(query, schedule_id, function (err, results, fields) {
         if (err) next(err);
         res.send(results);
     });
@@ -131,7 +132,8 @@ router.put("/update", function (req, res, next) {
 router.delete("/delete", function (req, res, next) {
     console.log('Delete Game', req.body.data);
     connection.query(
-        `DELETE FROM game WHERE id= ${req.body.data.game_id}`,
+        `DELETE FROM game WHERE id= ?`,
+        req.body.data.game_id,
         function (err, results, fields) {
             if (err) next(err);
             res.send(results);

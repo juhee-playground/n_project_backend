@@ -87,7 +87,7 @@ router.put("/update", function (req, res, next) {
 router.delete("/delete", function (req, res, next) {
     console.log('Delete TeamSplit', req.body);
     connection.query(
-        `DELETE FROM teamSplit WHERE id= ${req.body.teamSplit_id}`,
+        `DELETE FROM teamSplit WHERE id= ?`, req.body.teamSplit_id,
         function (err, results, fields) {
             if (err) next(err);
             res.send(results);
@@ -116,16 +116,14 @@ router.post("/bulkCreateOrUpdate", async function (req, res, next) {
                     let member_id = member_info.id;
                     let team_number = member_info.teamNumber;
                     query_result = await transaction_conn.query(`insert into teamSplit set ? on duplicate key update 
-                                                                 team_split_index = ${team_split_index}, schedule_id=${schedule_Id}, team_number=${team_number}`, 
-                                            {
-                                                "team_split_index": team_split_index, 
-                                                "schedule_id": schedule_Id, 
-                                                "member_id": member_id, 
-                                                "team_number": team_number
-                                            })
+                                                                 team_split_index = ?, schedule_id=?, team_number=?`, 
+                                            [
+                                               team_split_index, 
+                                               schedule_Id, 
+                                                team_number
+                                            ])
                 }
                 await transaction_conn.commit()
-                // console.log("Show me result?", query_result)
                 res.send(200, "Success");
             }catch (err){
                 transaction_conn.rollback()

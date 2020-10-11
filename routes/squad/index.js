@@ -63,7 +63,7 @@ router.put("/update", function (req, res, next) {
 router.delete("/delete", function (req, res, next) {
     console.log('Delete Squad', req.body);
     connection.query(
-        `DELETE FROM squad WHERE id= ${req.body.squad_id}`,
+        `DELETE FROM squad WHERE id= ?`, req.body.squad_id,
         function (err, results, fields) {
             if (err) next(err);
             res.send(results);

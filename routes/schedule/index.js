@@ -122,7 +122,7 @@ router.get("/getAttendList/:year/:month", function (req, res, next) {
                         join squad on squad.id = game.home_squad_id \
                         join memberSquad on memberSquad.squad_id = squad.id \
                         join member on member.id = memberSquad.member_id \
-                        where date_format(date,"%Y%m") = ${yearMonth}) \
+                        where date_format(date,"%Y%m") = ?) \
                     UNION ALL \
                       (SELECT game.id as game_id, schedule.id as schedule_id, null as home_member_name, member.name as away_member_name \
                         FROM schedule \
@@ -131,7 +131,8 @@ router.get("/getAttendList/:year/:month", function (req, res, next) {
                         join squad on squad.id = game.away_squad_id     \
                         join memberSquad on memberSquad.squad_id = squad.id  \
                         join member on member.id = memberSquad.member_id \
-                        where date_format(date,"%Y%m") = ${yearMonth})) as content`, 
+                        where date_format(date,"%Y%m") = ?)) as content`, 
+                        [yearMonth, yearMonth],
       function (err, results, fields) {
         if (err) next(err);
         if (results.length == 0) {
