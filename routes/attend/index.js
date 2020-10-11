@@ -56,7 +56,7 @@ router.get("/allCount", function (req, res, next) {
   });
 });
 
-router.get("/getattendList/:id", function (req, res, next) {
+router.get("/getattendList/:id", async function (req, res, next) {
   let schedule_id = req.params.id;
   if (!schedule_id) {
     return res.status(400).send({
@@ -71,10 +71,13 @@ router.get("/getattendList/:id", function (req, res, next) {
               where at.schedule_id = ?\
               and at.member_id = mb.id`
   let dataList = [schedule_id]
-  connection.query(query, dataList, function (err, results, fields) {
-    if (err) next(err);
-    res.send(results);
-  })
+  try{
+    const promisePool = connection.promise();
+    const [rows, fields] = await promisePool.query(query, dataList);
+    res.send(rows);
+  }catch (exception){
+    next(exception);
+  }
 });
 
 // Delete Attend
