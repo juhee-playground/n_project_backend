@@ -38,6 +38,8 @@ var squadRouter = require('./routes/squad');
 app.use('/api/squad', squadRouter)
 var teamSplitRouter = require('./routes/teamSplit');
 app.use('/api/teamSplit', teamSplitRouter)
+var team = require('./routes/team');
+app.use('/api/team', team)
 var memberSquadRouter = require('./routes/memberSquad');
 app.use('/api/memberSquad', memberSquadRouter)
 var gameReportRouter = require('./routes/gameReport');
