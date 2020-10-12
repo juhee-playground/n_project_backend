@@ -68,7 +68,7 @@ router.get("/getattendList/:id", async function (req, res, next) {
   let query = `SELECT * \
               from attend as at \
               join member as mb \
-              where at.schedule_id = ?\
+              where at.schedule_id = ? \
               and at.member_id = mb.id`
   let dataList = [schedule_id]
   try{
