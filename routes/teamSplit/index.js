@@ -100,41 +100,38 @@ router.post("/bulkCreateOrUpdate", async function (req, res, next) {
     let team_split_index = req.body.team_split_index
     let schedule_Id = req.body.selected_schedule_id
     console.log(schedule_Id, team_split_index, teamSplit_list)
-
+    const promisePool = connection.promise()
+    const transaction_conn = await promisePool.getConnection()
     try{
-        connection.getConnection(async (err, transaction_conn) =>{
-            try{
-                if (err) {
-                    con.release();
-                    throw err;
-                }
-                await transaction_conn.beginTransaction(); // transaction 시작
-            
-                let query_result = null
-                for (let i in teamSplit_list){
-                    let member_info = teamSplit_list[i];
-                    let member_id = member_info.id;
-                    let team_number = member_info.teamNumber;
-                    let [rows] = await transaction_conn.query(`insert into teamSplit set ? on duplicate key update 
-                                                                 team_split_index = ?, schedule_id=?, team_number=?`, 
-                                            [
-                                               team_split_index, 
-                                               schedule_Id, 
-                                                team_number
-                                            ])
-                }
-                await transaction_conn.commit()
-                res.send(200, "Success");
-            }catch (err){
-                transaction_conn.rollback()
-                throw err
-            }finally{
-                transaction_conn.release() // pool에 connection 반납
-            }
-        })
+        await transaction_conn.beginTransaction(); // transaction 시작
+    
+        for (let i in teamSplit_list){
+            let member_info = teamSplit_list[i];
+            let member_id = member_info.id;
+            let team_number = member_info.teamNumber;
+            let [rows] = await transaction_conn.query(`insert into teamSplit set ? on duplicate key update 
+                                                            team_split_index = ?, schedule_id=?, team_number=?`, 
+                                    [
+                                        {
+                                            member_id, 
+                                            team_split_index, 
+                                            schedule_Id, 
+                                            team_number
+                                        },
+                                        team_split_index, 
+                                        schedule_Id, 
+                                        team_number
+                                    ])
+        }
+        await transaction_conn.commit()
+        res.status(200).send("Success");
+          
     } catch (err) {
+        transaction_conn.rollback()
         console.log(err)
         next(err)        
+    }finally{
+        transaction_conn.release() // pool에 connection 반납
     }
 });
 
