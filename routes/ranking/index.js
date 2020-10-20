@@ -71,7 +71,10 @@ router.get("/goalRanking", function (req, res, next) {
   let sqlQuery = 'select member.name as name, count(*) as score \
                       from (select * from gameReport where gameReport.event_type = "Goal") as gameReportGoal \
                       join member \
+                      join game \
                       where gameReportGoal.first_player = member.id \
+                      and game.id = gameReportGoal.game_id \
+                      and game.is_jocker != true \
                       group by gameReportGoal.first_player order by score desc'
 
   connection.query(sqlQuery, function (err, results, fields) {
@@ -112,7 +115,9 @@ router.get("/assistRanking", function (req, res, next) {
   let sqlQuery = 'select member.name as name, count(*) as score \
                     from (select * from gameReport where gameReport.event_type = "Goal") as gameReportGoal \
                     join member on gameReportGoal.last_player = member.id \
+                    join game on game.id = gameReportGoal.game_id\
                     where gameReportGoal.last_player = member.id \
+                    and game.is_jocker != true\
                     group by gameReportGoal.last_player order by score desc'
 
   connection.query(sqlQuery, function (err, results, fields) {
@@ -251,7 +256,7 @@ function makeWhereQuery(scheduleYear, scheduleMonth, contestType){
         whereQuery = whereQuery + " or "
       }
     }
-    whereQuery = whereQuery + ")"
+    whereQuery = whereQuery + " and game.is_jocker != true)"
   }
   
   return whereQuery
