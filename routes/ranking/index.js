@@ -74,7 +74,7 @@ router.get("/goalRanking", function (req, res, next) {
                       join game \
                       where gameReportGoal.first_player = member.id \
                       and game.id = gameReportGoal.game_id \
-                      and game.is_jocker != true \
+                      and game.is_jocker is NULL \
                       group by gameReportGoal.first_player order by score desc'
 
   connection.query(sqlQuery, function (err, results, fields) {
@@ -117,7 +117,7 @@ router.get("/assistRanking", function (req, res, next) {
                     join member on gameReportGoal.last_player = member.id \
                     join game on game.id = gameReportGoal.game_id\
                     where gameReportGoal.last_player = member.id \
-                    and game.is_jocker != true\
+                    and game.is_jocker is NULL\
                     group by gameReportGoal.last_player order by score desc'
 
   connection.query(sqlQuery, function (err, results, fields) {
@@ -235,11 +235,11 @@ function makeWhereQuery(scheduleYear, scheduleMonth, contestType){
   if (scheduleYear =="0" && scheduleMonth == "0"){
     
   } else if (scheduleYear == "0") {
-    whereQuery = whereQuery + ` DATE_FORMAT(schedule.date, "%m") = "${scheduleMonth}" `;
+    whereQuery = whereQuery + ` DATE_FORMAT(schedule.date, "%m") = "${scheduleMonth}" and game.is_jocker is NULL`;
   } else if (scheduleMonth == "0") {
-    whereQuery = whereQuery + ` DATE_FORMAT(schedule.date, "%Y") = "${scheduleYear}" `;
+    whereQuery = whereQuery + ` DATE_FORMAT(schedule.date, "%Y") = "${scheduleYear}" and game.is_jocker is NULL`;
   } else{
-    whereQuery = whereQuery + ` DATE_FORMAT(schedule.date, "%Y-%m") = "${scheduleYear}-${scheduleMonth}" `
+    whereQuery = whereQuery + ` DATE_FORMAT(schedule.date, "%Y-%m") = "${scheduleYear}-${scheduleMonth}" and game.is_jocker is NULL`
   }
 
   if (contestType != "" ){
@@ -256,7 +256,7 @@ function makeWhereQuery(scheduleYear, scheduleMonth, contestType){
         whereQuery = whereQuery + " or "
       }
     }
-    whereQuery = whereQuery + " and game.is_jocker != true)"
+    whereQuery = whereQuery + " )"
   }
   
   return whereQuery
