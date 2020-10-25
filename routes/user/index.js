@@ -7,6 +7,7 @@ const encrypt = require("../../config/encrypt");
 const secret = encrypt.secret;
 const router = express.Router();
 const authMiddleware = require("../../custom_lib/auth_middleware");
+const e = require("express");
 
 router.get("/", function (req, res, next) {
   res.send("Update user World");
@@ -41,26 +42,26 @@ router.post("/login", function (req, res, next) {
     console.log(req.body);
     account.userId = req.body.userId;
     account.password = req.body.password;
-    if (account.userId) {
-      connection.query(`SELECT * FROM user WHERE userId = "${account.userId}"`, 
-      function (error, results, fields) {
-        if (error) {
-          console.log(error);
-        }
-        const decryptedPassword = crypto
+    connection.query(`SELECT * FROM user WHERE userId = "${account.userId}"`, 
+    function (error, results, fields) {
+      if (error) {
+        console.log(error);
+      }
+      const decryptedPassword = crypto
           .createHmac("sha1", secret)
           .update(account.password)
           .digest("base64");
-          
-        console.log("results", results[0]);
+
+      console.log("results", results[0]);
+      if(results[0] && decryptedPassword === results[0].password) {
         const id = results[0]["userId"];
         const name = results[0]["name"];
         const member_id = results[0]["member_id"];
         const team_id = results[0]["team_id"];
         const exp = 1480849147370;
-        
+      
         console.log("name", name);
-          
+        
         const signature = {
           header: {
             typ: "JWT",
@@ -76,40 +77,38 @@ router.post("/login", function (req, res, next) {
         };
         console.log("signature", signature);
 
-        if (results.length > 0 && decryptedPassword == results[0].password) {
-          const getToken = new Promise((resolve, reject) => {
-            jwt.sign(
-              signature,
-              secret,
-              (err, token) => {
-                if (err) reject(err)
-                resolve(token)
-              })
-          });
-          
-          getToken.then(
-            token => {
-              res.status(200).json({
-                "status": 200,
-                "message": 'login success',
-                "Authorization": 'Bearer ' + token
-              });
-            }
-          );
-        }else {
-          console.log("password 가 틀림");
-          res.status(400).json({
-            'status': 400,
-            'message': 'password 가 정확하지 않습니다.'
-          });
-        }
-      });
-    } else {
-      res.status(400).json({
-        'status': 400,
-        'message': '일치하는 id값이 없습니다.'
-      });
-    }
+        const getToken = new Promise((resolve, reject) => {
+          jwt.sign(
+            signature,
+            secret,
+            (err, token) => {
+              if (err) reject(err)
+              resolve(token)
+            })
+        });
+        
+        getToken.then(
+          token => {
+            res.status(200).json({
+              "status": 200,
+              "message": 'login success',
+              "Authorization": 'Bearer ' + token
+            });
+          }
+        );
+      } else if(results[0] && decryptedPassword !== results[0].password){
+        console.log("password 가 틀림");
+        res.status(400).json({
+          'status': 400,
+          'message': 'password 가 정확하지 않습니다.'
+        });
+      }else {
+        res.status(400).json({
+          'status': 400,
+          'message': '일치하는 id값이 없습니다.'
+        });
+      }
+    });
 });
 
 router.use("/check", authMiddleware);
