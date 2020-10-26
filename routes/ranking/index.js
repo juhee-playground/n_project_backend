@@ -132,13 +132,6 @@ router.get("/assistRankingFilter/:contest/:year/:month", function (req, res, nex
   let scheduleYear = req.params.year;
   let scheduleMonth = req.params.month;
   let contestType = req.params.contest;
-  console.log("res1", contestType);
-  console.log("res2", contestType.indexOf("P"));
-  if(contestType.indexOf("P") > -1) {
-    console.log("있다/");
-    contestType.replace("P", "T, P");
-  }
-  console.log("res3", contestType);
   
   let whereQuery =  makeWhereQuery(scheduleYear, scheduleMonth, contestType)
   if (whereQuery !== ""){
