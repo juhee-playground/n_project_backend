@@ -23,7 +23,6 @@ router.post("/create", function(req, res, next) {
   });
 });
 
-// Read Member
 router.get("/list", function(req, res, next) {
   connection.query("SELECT * from Team", function(err, results, fields) {
     if (err) next(err);
