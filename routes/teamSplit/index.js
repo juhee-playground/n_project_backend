@@ -28,20 +28,10 @@ router.get("/list", function (req, res, next) {
 });
 
 
-// router.post("/listWithDate", function (req, res, next) {
-//     console.log(req.body);
-//     let date = req.body.schedule_date;
-//     // where date_format(schedule.date, '%Y%m') = ${date}
-//     connection.query("SELECT * from teamSplit", function (err, results, fields) {
-//         if (err) next(err);
-//         res.send(results);
-//     });
-// });
-
 //Read selected TeamSplit
 router.get("/getSplitTeamListWithSchedule/:id", function (req, res, next) {
     let schedule_id = req.params.id;
-    let query = "SELECT teamSplit.id, teamSplit.team_split_index, teamSplit.schedule_id, teamSplit.member_id, teamSplit.team_number, \
+    let query = "SELECT teamSplit.team_split_index, teamSplit.member_id, teamSplit.team_number, \
                         member.name, member.uniform_number \
                         from teamSplit join member \
                         where teamSplit.schedule_id = ? and teamSplit.member_id = member.id;"
