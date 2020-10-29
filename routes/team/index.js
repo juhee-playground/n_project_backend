@@ -11,7 +11,7 @@ router.get("/", function(req, res, next) {
 // Create Member
 router.post("/create", function(req, res, next) {
   var teamData = req.body;
-  connection.query("INSERT INTO team SET ?", teamData, function(
+  connection.query("INSERT INTO Team SET ?", teamData, function(
     err,
     results,
     fields
@@ -39,7 +39,7 @@ router.get("/:id", function(req, res, next) {
       message: "Please provide team_id"
     });
   }
-  connection.query("SELECT * FROM Team where id=?", team_id, function(
+  connection.query("SELECT * FROM Team where idTeam=?", team_id, function(
     err,
     results,
     fields
@@ -64,12 +64,12 @@ router.put("/update", function(req, res, next) {
   if (!team_id || !team) {
     return res.status(400).send({
       err: team,
-      message: "Please provide Team and team_id"
+      message: "Please provide Team and idTeam"
     });
   }
 
   connection.query(
-    "UPDATE team SET ? WHERE id = ?",
+    "UPDATE team SET ? WHERE idTeam = ?",
     [team, team_id],
     function(err, results, fields) {
       if (err) next(err);
@@ -81,7 +81,7 @@ router.put("/update", function(req, res, next) {
 // Delete Member
 router.delete("/delete", function(req, res, next) {
   connection.query(
-    "DELETE FROM Team WHERE id=?",
+    "DELETE FROM Team WHERE idTeam=?",
     [req.body.team_id],
     function(err, results, fields) {
       if (err) next(err);

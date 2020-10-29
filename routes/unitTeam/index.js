@@ -11,6 +11,7 @@ router.get("/", function(req, res, next) {
 // Create Member
 router.post("/create", function(req, res, next) {
   var teamData = req.body;
+  console.log("teamData", teamData);
   connection.query("INSERT INTO unitTeam SET ?", teamData, function(
     err,
     results,
@@ -18,7 +19,6 @@ router.post("/create", function(req, res, next) {
   ) {
     if (err) next(err);
 
-    console.log(results.insertId);
     res.send(JSON.stringify(results));
   });
 });
