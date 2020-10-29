@@ -90,4 +90,22 @@ router.delete("/delete", function(req, res, next) {
   );
 });
 
+//Read selected TeamSplit
+router.get("/getSplitTeamWithUnitTeam/:year/:scheduleId", function (req, res, next) {
+  let season = req.params.year;
+  let scheduleId = req.params.scheduleId;
+  console.log(season, scheduleId)
+  let query = "SELECT unitMember.member_id, unit_team_id as team_number, 1 as team_split_index, member.name, member.uniform_number \
+                  FROM unitTeam \
+                  join unitMember on unitTeam.id_unit_team = unitMember.unit_team_id \
+                  join member on unitMember.member_id = member.id \
+                  join attend on attend.member_id = unitMember.member_id \
+                  where unitTeam.season = ? and attend.schedule_id = ?;"
+  connection.query(query, [season, scheduleId], function (err, results, fields) {
+      if (err) next(err);
+      res.send(results);
+  });
+});
+
+
 module.exports = router;
