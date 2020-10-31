@@ -12,7 +12,6 @@ router.get("/", function (req, res, next) {
 router.post("/create", function (req, res, next) {
   var rankingData = req.body;
 
-  console.log(rankingData);
   connection.query("INSERT INTO ranking SET ?", rankingData, function (err, results, fields) {
     if (err) next(err);
     res.send(results);
@@ -196,7 +195,7 @@ router.get("/cleanSheetRankingFilter/:contest/:year/:month", function (req, res,
   }
   
   // goal 
-  let sqlQueryHome = `select member.id as id, member.name as name, game.id as game_id \
+  let sqlQueryHome = `select member.id as member_id, member.name as name, game.id as game_id \
                           from game \
                             join gameReport on game.id = gameReport.game_id \
                             join squad on game.home_squad_id = squad.id \
@@ -206,7 +205,7 @@ router.get("/cleanSheetRankingFilter/:contest/:year/:month", function (req, res,
                           WHERE memberSquad.position = "GK" AND \
                             (game.home_score = 0 AND game.away_score <> 0) \
                             ${whereQuery}`
-  let sqlQueryAway = `select member.id as id, member.name as name, game.id as game_id \
+  let sqlQueryAway = `select member.id as member_id, member.name as name, game.id as game_id \
                         from game \
                           join gameReport on game.id = gameReport.game_id \
                           join squad on game.home_squad_id = squad.id \
@@ -216,12 +215,29 @@ router.get("/cleanSheetRankingFilter/:contest/:year/:month", function (req, res,
                         WHERE memberSquad.position = "GK" AND \
                           (game.away_score = 0 AND game.home_score <> 0) \
                           ${whereQuery}`
+                          
+  let additionaAwayQuery = `select gameReport.last_player as member_id, member.name , cleanTable.game_id \
+                        from (${sqlQueryAway}) \
+                        as cleanTable \
+                        join gameReport on gameReport.game_id = cleanTable.game_id \
+                        join member on gameReport.last_player = member.id \
+                        where gameReport.event_type = 'K.O' and team_type = 'H' and gameReport.last_player is not NULL`
+  let additionaHomeQuery = `select gameReport.last_player as member_id, member.name , cleanTable.game_id \
+                        from (${sqlQueryHome}) \
+                        as cleanTable \
+                        join gameReport on gameReport.game_id = cleanTable.game_id \
+                        join member on gameReport.last_player = member.id \
+                        where gameReport.event_type = 'K.O' and team_type = 'A' and gameReport.last_player is not NULL`
 
-  let totalQuery = `select cleanTable.id as id, cleanTable.name as name, count(*) as score \
-                    from (${sqlQueryHome} \
-                    UNION \
-                    ${sqlQueryAway}) as cleanTable \
-                    group by cleanTable.id order by score desc`
+  let totalQuery = `select cleanTable.member_id as id, cleanTable.name as name, count(*) as score \
+                        from (${sqlQueryHome} \
+                        UNION \
+                        ${sqlQueryAway} \
+                        UNION \
+                        ${additionaHomeQuery} \
+                        UNION \
+                        ${additionaAwayQuery}) as cleanTable \
+                        group by cleanTable.member_id order by score desc`
 
   connection.query(totalQuery, function (err, results, fields) {
     if (err) next(err);
