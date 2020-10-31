@@ -42,6 +42,8 @@ var team = require('./routes/team');
 app.use('/api/team', team)
 var unitTeam = require('./routes/unitTeam');
 app.use('/api/unitTeam', unitTeam)
+var unitMember = require('./routes/unitMember');
+app.use('/api/unitMember', unitMember)
 var memberSquadRouter = require('./routes/memberSquad');
 app.use('/api/memberSquad', memberSquadRouter)
 var gameReportRouter = require('./routes/gameReport');

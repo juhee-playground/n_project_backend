@@ -57,19 +57,19 @@ router.get("/:id", function(req, res, next) {
 
 //  Update member with id
 router.put("/update", function(req, res, next) {
-  let team_id = req.body.team_id;
-  let team = req.body.team;
+  let id_unit_team = req.body.id_unit_team;
+  let team = req.body.unit_team_info;
 
-  if (!team_id || !team) {
+  if (!id_unit_team || !team) {
     return res.status(400).send({
       err: team,
-      message: "Please provide unitTeam and unit_team_id"
+      message: "Please provide unitTeam and id_unit_team"
     });
   }
 
   connection.query(
-    "UPDATE unitTeam SET ? WHERE unit_team_id = ?",
-    [team, team_id],
+    "UPDATE unitTeam SET ? WHERE id_unit_team = ?",
+    [team, id_unit_team],
     function(err, results, fields) {
       if (err) next(err);
       res.send(results);
@@ -80,8 +80,8 @@ router.put("/update", function(req, res, next) {
 // Delete Member
 router.delete("/delete", function(req, res, next) {
   connection.query(
-    "DELETE FROM unitTeam WHERE unit_team_id=?",
-    [req.body.team_id],
+    "DELETE FROM unitTeam WHERE id_unit_team=?",
+    [req.body.id_unit_team],
     function(err, results, fields) {
       if (err) next(err);
       console.log(results);
