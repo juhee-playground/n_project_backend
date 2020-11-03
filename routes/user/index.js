@@ -39,10 +39,21 @@ router.post("/register", function (req, res, next) {
 // Create Attend
 router.post("/login", function (req, res, next) {
     const account = {};
-    console.log(req.body);
+    const historyData = {};
+
     account.userId = req.body.userId;
     account.password = req.body.password;
-    connection.query(`SELECT * FROM user WHERE userId = "${account.userId}"`, 
+
+    const ip = req.headers['x-forwarded-for'] ||
+     req.connection.remoteAddress ||
+     req.socket.remoteAddress ||
+     req.connection.socket.remoteAddress || 
+     req.ip;
+
+    const agent = req.header("user-Agent");
+    let detailsText = "IP: " + ip + " / Agent: " + agent.toLowerCase();
+
+    connection.query(`SELECT * FROM user WHERE userId = "${account.userId}"`,
     function (error, results, fields) {
       if (error) {
         console.log(error);
@@ -52,16 +63,14 @@ router.post("/login", function (req, res, next) {
           .update(account.password)
           .digest("base64");
 
-      console.log("results", results[0]);
       if(results[0] && decryptedPassword === results[0].password) {
+        const number = results[0]["id"];
         const id = results[0]["userId"];
         const name = results[0]["name"];
         const member_id = results[0]["member_id"];
         const team_id = results[0]["team_id"];
         const exp = 1480849147370;
       
-        console.log("name", name);
-        
         const signature = {
           header: {
             typ: "JWT",
@@ -75,7 +84,6 @@ router.post("/login", function (req, res, next) {
             exp
           }
         };
-        console.log("signature", signature);
 
         const getToken = new Promise((resolve, reject) => {
           jwt.sign(
@@ -96,8 +104,14 @@ router.post("/login", function (req, res, next) {
             });
           }
         );
+        // 사용자 로그 기록 하기 위해서.
+        historyData["user_id"] = number;
+        historyData["type"] = "login";
+        historyData["details"] = detailsText;
+        console.log("historyData", historyData);
+        connection.query("INSERT INTO userHistory SET ?", historyData);
+
       } else if(results[0] && decryptedPassword !== results[0].password){
-        console.log("password 가 틀림");
         res.status(400).json({
           'status': 400,
           'message': 'password 가 정확하지 않습니다.'
