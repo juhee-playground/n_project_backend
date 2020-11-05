@@ -183,17 +183,18 @@ router.get("/cleanSheetRanking", function (req, res, next) {
     res.send(results);
   });
 });
+
 // League ranking
 router.get("/leagueRanking/:year", function (req, res, next) {
   let scheduleYear = req.params.year;
   `DATE_FORMAT(schedule.date, "%Y") = "${scheduleYear}"`
-  let sqlQueryHome = `SELECT unitTeam.id_unit_team, unitTeam.name, game.home_score as plusScore, game.away_score as minusScore, game.result, unitTeam.emblem \
+  let sqlQueryHome = `SELECT unitTeam.id_unit_team, unitTeam.name, game.home_score as plusScore, game.away_score as minusScore, unitTeam.emblem \
                     FROM game \
                     join schedule on schedule.id = game.schedule_id \
                     join squad on squad.id = game.home_squad_id \
                     join unitTeam on unitTeam.id_unit_team = squad.team_number \
                     where schedule.type = "L" and DATE_FORMAT(schedule.date, "%Y") = ?`
-  let sqlQueryAway = `SELECT unitTeam.id_unit_team, unitTeam.name, game.away_score as plusScore, game.home_score as minusScore, game.result, unitTeam.emblem \
+  let sqlQueryAway = `SELECT unitTeam.id_unit_team, unitTeam.name, game.away_score as plusScore, game.home_score as minusScore, unitTeam.emblem \
                     FROM game \
                     join schedule on schedule.id = game.schedule_id \
                     join squad on squad.id = game.away_squad_id \
@@ -205,10 +206,11 @@ router.get("/leagueRanking/:year", function (req, res, next) {
                       count(if(plusScore = minusScore, 1, null)) as draw, \
                       count(*) as gameCount \
                       from \
-                    (${sqlQueryHome} union ${sqlQueryAway}) as leagueRanking group by leagueRanking.name`
+                    (${sqlQueryHome} union all ${sqlQueryAway}) as leagueRanking group by leagueRanking.name`
 
   connection.query(sqlQuery, [scheduleYear, scheduleYear], function (err, results, fields) {
     if (err) next(err);
+    console.log("results", results);
     res.send(results);
   });
 });
