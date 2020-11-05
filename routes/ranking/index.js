@@ -186,7 +186,7 @@ router.get("/cleanSheetRanking", function (req, res, next) {
 // League ranking
 router.get("/leagueRanking/:year", function (req, res, next) {
   let scheduleYear = req.params.year;
-  `DATE_FORMAT(schedule.date, "%Y") = "${scheduleYear}"`
+  
   let sqlQueryHome = `SELECT unitTeam.id_unit_team, unitTeam.name, game.home_score as plusScore, game.away_score as minusScore, game.result, unitTeam.emblem \
                     FROM game \
                     join schedule on schedule.id = game.schedule_id \
@@ -212,6 +212,23 @@ router.get("/leagueRanking/:year", function (req, res, next) {
     res.send(results);
   });
 });
+
+router.get("/leagueRecord/:year",function(req, res, next){
+  let scheduleYear = req.params.year;
+  let sqlQuery = `SELECT unitTeam.name, awayUnitTeam.name, game.result
+                      FROM game 
+                      join schedule on schedule.id = game.schedule_id 
+                      join squad on squad.id = game.home_squad_id 
+                      join squad as awaySquad on awaySquad.id = game.away_squad_id 
+                      join unitTeam on unitTeam.id_unit_team = squad.team_number 
+                      join unitTeam as awayUnitTeam on awayUnitTeam.id_unit_team = awaySquad.team_number  
+                      where schedule.type = "L" and DATE_FORMAT(schedule.date, "%Y") = ?`
+  connection.query(sqlQuery, [scheduleYear], function (err, results, fields) {
+    if (err) next(err);
+    res.send(results);
+  });
+})
+
 router.get("/cleanSheetRankingFilter/:contest/:year/:month", function (req, res, next) {
   
   let scheduleYear = req.params.year;
