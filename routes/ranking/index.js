@@ -205,7 +205,7 @@ router.get("/leagueRanking/:year", function (req, res, next) {
                       count(if(plusScore = minusScore, 1, null)) as draw, \
                       count(*) as gameCount \
                       from \
-                    (${sqlQueryHome} union all ${sqlQueryAway}) as leagueRanking group by leagueRanking.name`
+                    (${sqlQueryHome} union all ${sqlQueryAway}) as leagueRanking group by leagueRanking.name order by win, draw`
 
   connection.query(sqlQuery, [scheduleYear, scheduleYear], function (err, results, fields) {
     if (err) next(err);
@@ -216,7 +216,7 @@ router.get("/leagueRanking/:year", function (req, res, next) {
 
 router.get("/leagueRecord/:year",function(req, res, next){
   let scheduleYear = req.params.year;
-  let sqlQuery = `SELECT unitTeam.name, awayUnitTeam.name, game.result
+  let sqlQuery = `SELECT unitTeam.id_unit_team as homeId, unitTeam.name as home, awayUnitTeam.id_unit_team as awayId, awayUnitTeam.name as away, game.result
                       FROM game 
                       join schedule on schedule.id = game.schedule_id 
                       join squad on squad.id = game.home_squad_id 
