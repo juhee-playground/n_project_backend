@@ -150,6 +150,54 @@ router.get("/assistRankingFilter/:contest/:year/:month", function (req, res, nex
     res.send(results);
   });
 });
+
+// 출석률 확인하기
+router.get("/attendRankingFilter/:contest/:year/:month", function (req, res, next) {
+  let scheduleYear = req.params.year;
+  let scheduleMonth = req.params.month;
+  let contestType = req.params.contest;
+  console.log(req.params)
+  let whereQuery =  makeWhereQuery(scheduleYear, scheduleMonth, contestType)
+  if (whereQuery !== ""){
+    whereQuery = "where " + whereQuery
+  }
+  // 선발 출전한 사람들 모음  
+  let attendDraft = `SELECT game.id as game_id, member.id AS member_id, member.name AS name \
+                    FROM schedule \
+                    join \
+                      (SELECT game.*, game.home_squad_id AS squad_id FROM nnnn.game \
+                      union \
+                      SELECT game.*, game.away_squad_id AS squad_id FROM nnnn.game) \
+                      AS game \
+                    on schedule.id = game.schedule_id \
+                    join squad on squad.id = game.squad_id \
+                    join (SELECT * FROM memberSquad where memberSquad.position IS NOT NULL) \
+                      AS memberSquad on memberSquad.squad_id = squad.id \
+                    join member on member.id = memberSquad.member_id \
+                    ${whereQuery}`
+
+  // 교체 출전한 사람들 모음
+  let attendReplace = `SELECT game.id as game_id, member.id AS member_id, member.name AS name \
+                          FROM schedule \
+                          JOIN \
+                            (SELECT game.*, game.home_squad_id AS squad_id FROM nnnn.game \
+                            UNION \
+                            SELECT game.*, game.away_squad_id AS squad_id FROM nnnn.game) \
+                            AS game \
+                            ON schedule.id = game.schedule_id \
+                          JOIN (SELECT * FROM gameReport WHERE gameReport.event_type = "Out" AND gameReport.last_player IS NOT NULL) \
+                            AS gameReport \
+                            ON gameReport.game_id = game.id \
+                          JOIN member on member.id = gameReport.last_player \
+                          ${whereQuery}`
+  let sqlQuery = `SELECT attend.member_id, attend.name, count(*) as score FROM (${attendDraft} UNION ${attendReplace}) AS attend group by attend.member_id order by score desc`
+  console.log(attendReplace)
+  connection.query(sqlQuery, function (err, results, fields) {
+    if (err) next(err);
+    res.send(results);
+  });
+});
+
 // Read ranking
 router.get("/cleanSheetRanking", function (req, res, next) {
 
