@@ -14,7 +14,7 @@ router.post("/count/threeMonths", function (req, res, next) {
   let date = req.body.standard_date;
   let beforeDate = req.body.before_date;
 
-  let query = `select member.name, member.id, COUNT(attend.schedule_id) as count \
+  let query = `select member.name, member.id, member.withdraw_date, COUNT(attend.schedule_id) as count \
                 from attend \
                   join  \
                   (select * from schedule where date_format(schedule.date, '%Y%m') >= ? and date_format(schedule.date, '%Y%m') < ?) as schedule \
