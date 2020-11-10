@@ -69,6 +69,7 @@ router.post("/login", function (req, res, next) {
         const name = results[0]["name"];
         const member_id = results[0]["member_id"];
         const team_id = results[0]["team_id"];
+        const role = results[0]["role"];
         const exp = 1480849147370;
       
         const signature = {
@@ -81,6 +82,7 @@ router.post("/login", function (req, res, next) {
             name,
             member_id,
             team_id,
+            role,
             exp
           }
         };
