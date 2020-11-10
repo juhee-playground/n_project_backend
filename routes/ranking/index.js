@@ -187,19 +187,19 @@ router.get("/cleanSheetRanking", function (req, res, next) {
 // League ranking
 router.get("/leagueRanking/:year", function (req, res, next) {
   let scheduleYear = req.params.year;
-  let sqlQueryHome = `SELECT unitTeam.id_unit_team, unitTeam.name, game.home_score as plusScore, game.away_score as minusScore, unitTeam.emblem \
+  let sqlQueryHome = `SELECT unitTeam.id_unit_team, unitTeam.name, unitTeam.description, game.home_score as plusScore, game.away_score as minusScore, unitTeam.emblem \
                     FROM game \
                     join schedule on schedule.id = game.schedule_id \
                     join squad on squad.id = game.home_squad_id \
                     join unitTeam on unitTeam.id_unit_team = squad.team_number \
                     where schedule.type = "L" and DATE_FORMAT(schedule.date, "%Y") = ?`
-  let sqlQueryAway = `SELECT unitTeam.id_unit_team, unitTeam.name, game.away_score as plusScore, game.home_score as minusScore, unitTeam.emblem \
+  let sqlQueryAway = `SELECT unitTeam.id_unit_team, unitTeam.name, unitTeam.description, game.away_score as plusScore, game.home_score as minusScore, unitTeam.emblem \
                     FROM game \
                     join schedule on schedule.id = game.schedule_id \
                     join squad on squad.id = game.away_squad_id \
                     join unitTeam on unitTeam.id_unit_team = squad.team_number \
                     where schedule.type = "L" and DATE_FORMAT(schedule.date, "%Y") = ?`
-  let sqlQuery = `select id_unit_team, name, emblem, sum(plusScore) as goalEarn, sum(minusScore) as goalLose, \
+  let sqlQuery = `select id_unit_team, name, description, emblem, sum(plusScore) as goalEarn, sum(minusScore) as goalLose, \
                       count(if(plusScore > minusScore, 1, null)) as win, \
                       count(if(plusScore < minusScore, 1, null)) as lose, \
                       count(if(plusScore = minusScore, 1, null)) as draw, \
