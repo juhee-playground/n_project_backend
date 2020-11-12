@@ -21,7 +21,7 @@ router.post("/create", function (req, res, next) {
 
 // Read Game
 router.get("/list", function (req, res, next) {
-    connection.query("SELECT * from game", function (err, results, fields) {
+    connection.query("SELECT * from game order by schedule_id, quarter", function (err, results, fields) {
         if (err) next(err);
         res.send(results);
     });
@@ -96,11 +96,11 @@ router.post("/searchWithScheduleIdAndQuarter", function (req, res, next) {
 });
 
 // Read Game search filtering schedule_id 
-router.post("/searchWithScheduleId", function (req, res, next) {
-    let schedule_id = req.body.schedule_id;
-    let query = `SELECT * from game where schedule_id=?`
-    connection.query(query, schedule_id, function (err, results, fields) {
+router.get("/searchWithScheduleId/:schedule_id", function (req, res, next) {
+    let schedule_id = req.params.schedule_id;
+    connection.query("SELECT * from game where schedule_id = ? order by quarter", schedule_id, function (err, results, fields) {
         if (err) next(err);
+        console.log("results", results);
         res.send(results);
     });
 });
