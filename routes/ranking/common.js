@@ -25,7 +25,6 @@ router.get("/list", function (req, res, next) {
   });
 });
 
-
 //  Update ranking with id
 router.put("/update", function (req, res, next) {
   let ranking_id = req.body.ranking_id;
@@ -62,7 +61,6 @@ router.delete("/delete", function (req, res, next) {
   );
 });
 
-// Read ranking
 router.get("/goalRanking", function (req, res, next) {
 
   // 전체기간 랭킹
@@ -80,7 +78,7 @@ router.get("/goalRanking", function (req, res, next) {
     res.send(results);
   });
 });
-// Read ranking
+
 router.get("/goalRankingFilter/:contest/:year/:month", function (req, res, next) {
   let scheduleYear = req.params.year;
   let scheduleMonth = req.params.month;
@@ -106,9 +104,6 @@ router.get("/goalRankingFilter/:contest/:year/:month", function (req, res, next)
   });
 });
 
-
-
-// Read ranking
 router.get("/assistRanking", function (req, res, next) {
 
   let sqlQuery = 'select member.name as name, count(*) as score \
@@ -125,7 +120,6 @@ router.get("/assistRanking", function (req, res, next) {
   });
 });
 
-// Read ranking
 router.get("/assistRankingFilter/:contest/:year/:month", function (req, res, next) {
   let scheduleYear = req.params.year;
   let scheduleMonth = req.params.month;
@@ -150,7 +144,6 @@ router.get("/assistRankingFilter/:contest/:year/:month", function (req, res, nex
   });
 });
 
-// 출석률 확인하기
 router.get("/attendRankingFilter/:contest/:year/:month", function (req, res, next) {
   let scheduleYear = req.params.year;
   let scheduleMonth = req.params.month;
@@ -197,7 +190,6 @@ router.get("/attendRankingFilter/:contest/:year/:month", function (req, res, nex
   });
 });
 
-// Read ranking
 router.get("/cleanSheetRanking", function (req, res, next) {
 
   // goal 
@@ -231,7 +223,6 @@ router.get("/cleanSheetRanking", function (req, res, next) {
   });
 });
 
-// League ranking
 router.get("/leagueRanking/:year", function (req, res, next) {
   let scheduleYear = req.params.year;
   let sqlQueryHome = `SELECT unitTeam.id_unit_team, unitTeam.name, unitTeam.description, game.home_score as plusScore, game.away_score as minusScore, unitTeam.emblem \
