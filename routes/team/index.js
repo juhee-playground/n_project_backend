@@ -51,6 +51,7 @@ router.get("/:id", function(req, res, next) {
         message:"No Result Found"
       }) 
     }
+    console.log(results[0]);
     res.send(results[0]);
     
   });
