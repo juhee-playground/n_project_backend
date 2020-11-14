@@ -64,8 +64,8 @@ router.post("/login", function (req, res, next) {
           .digest("base64");
 
       if(results[0] && decryptedPassword === results[0].password) {
-        const number = results[0]["id"];
-        const id = results[0]["userId"];
+        const id = results[0]["id"];
+        const user_id = results[0]["userId"];
         const name = results[0]["name"];
         const member_id = results[0]["member_id"];
         const team_id = results[0]["team_id"];
@@ -79,6 +79,7 @@ router.post("/login", function (req, res, next) {
           },
           payload: {
             id,
+            user_id,
             name,
             member_id,
             team_id,
@@ -107,7 +108,7 @@ router.post("/login", function (req, res, next) {
           }
         );
         // 사용자 로그 기록 하기 위해서.
-        historyData["user_id"] = number;
+        historyData["user_id"] = id;
         historyData["type"] = "login";
         historyData["details"] = detailsText;
         console.log("historyData", historyData);

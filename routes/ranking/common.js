@@ -247,7 +247,6 @@ router.get("/leagueRanking/:year", function (req, res, next) {
 
   connection.query(sqlQuery, [scheduleYear, scheduleYear], function (err, results, fields) {
     if (err) next(err);
-    console.log("results", results);
     res.send(results);
   });
 });
