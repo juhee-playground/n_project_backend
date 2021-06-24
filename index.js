@@ -18,7 +18,7 @@ app.use(express.urlencoded({
 app.use(cookieParser());
 
 // configuration ===============================================================
-app.set('port', process.env.PORT || 443);
+app.set('port', process.env.PORT || 80);
 // app.set('port', process.env.PORT || 443);
 // https.createServer(app).listen(PORT);
 
