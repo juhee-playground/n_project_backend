@@ -18,7 +18,7 @@ app.use(express.urlencoded({
 app.use(cookieParser());
 
 // configuration ===============================================================
-app.set('port', process.env.PORT || 80);
+app.set('port', process.env.PORT || 3000);
 // app.set('port', process.env.PORT || 443);
 // https.createServer(app).listen(PORT);
 
@@ -79,6 +79,6 @@ function errorHandler(err, req, res, next) {
 
 
 app.listen(app.get('port'), function () {
-  // console.log('Express server listening on port ' + app.get('port') + ' http://localhost:3000/');
-  console.log('Express server listening on port ' + app.get('port') + ' https://nnnn-api.code2world.xyz/');
+  console.log('Express server listening on port ' + app.get('port') + ' http://localhost:3000/');
+  // console.log('Express server listening on port ' + app.get('port') + ' https://nnnn-api.code2world.xyz/');
 });
