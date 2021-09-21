@@ -1,9 +1,7 @@
 var express = require('express');
-const https = require('https');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors');
-// const PORT = rpcess.env.PORT || 443;
 
 var connection = require('./custom_lib/db_connection.js');
 
@@ -18,9 +16,8 @@ app.use(express.urlencoded({
 app.use(cookieParser());
 
 // configuration ===============================================================
-app.set('port', process.env.PORT || 3000);
-// app.set('port', process.env.PORT || 443);
-// https.createServer(app).listen(PORT);
+// app.set('port', process.env.PORT || 443); // process.env.PORT undefind;
+app.set('port', 3000 || 443);
 
 app.get('/', function (req, res, next) {
   res.send('Root');
@@ -79,6 +76,5 @@ function errorHandler(err, req, res, next) {
 
 
 app.listen(app.get('port'), function () {
-  console.log('Express server listening on port ' + app.get('port') + ' http://localhost:3000/');
-  // console.log('Express server listening on port ' + app.get('port') + ' https://nnnn-api.code2world.xyz/');
+  console.log('Express server listening on port ' + app.get('port') + ' https://localhost:3000/');
 });

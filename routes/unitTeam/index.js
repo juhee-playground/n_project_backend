@@ -31,7 +31,7 @@ router.get("/list", function(req, res, next) {
 });
 
 router.get("/:id", function(req, res, next) {
-  let unit_team_id = req.params.id;
+  const unit_team_id = req.params.id;
   if (!unit_team_id) {
     return res.status(400).send({
       err: true,
@@ -57,8 +57,9 @@ router.get("/:id", function(req, res, next) {
 
 //  Update member with id
 router.put("/update", function(req, res, next) {
-  let id_unit_team = req.body.id_unit_team;
-  let team = req.body.unit_team_info;
+  console.log("update=======================", req.body);
+  const id_unit_team = req.body.id_unit_team;
+  const team = req.body.unit_team_info;
 
   if (!id_unit_team || !team) {
     return res.status(400).send({
@@ -84,7 +85,6 @@ router.delete("/delete", function(req, res, next) {
     [req.body.id_unit_team],
     function(err, results, fields) {
       if (err) next(err);
-      console.log(results);
       res.send(results);
     }
   );

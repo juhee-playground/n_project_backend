@@ -113,7 +113,6 @@ router.delete("/delete", function(req, res, next) {
     [req.body.member_id],
     function(err, results, fields) {
       if (err) next(err);
-      console.log(results);
       res.send(results);
     }
   );

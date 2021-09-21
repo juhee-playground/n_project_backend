@@ -10,7 +10,7 @@ router.get("/", function(req, res, next) {
 
 // Create Member
 router.post("/create", function(req, res, next) {
-  var playerData = req.body;
+  const playerData = req.body;
   console.log("playerData", playerData);
   connection.query("INSERT INTO unitMember SET ?", playerData, function(
     err,
@@ -51,16 +51,15 @@ router.get("/list", function(req, res, next) {
   connection.query("SELECT * FROM unitMember",
   function( err, results, fields) {
     if (err) next(err);
-    console.log(results);
     res.send(results);
   });
 });
 
 // Delete Member
-router.delete("/delete/:id", function(req, res, next) {
+router.delete("/delete", function(req, res, next) {
   connection.query(
     "DELETE FROM unitMember WHERE id_unit_member=?",
-    [req.params.id],
+    [req.body.id_unit_member],
     function(err, results, fields) {
       if (err) next(err);
       console.log(results);
